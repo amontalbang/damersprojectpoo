@@ -10,8 +10,6 @@ package onlinestore;
     * @author DAMERs Project POO
  */
 
-/*Este cambio tienes que recogerlo*/
-
 public class Articulo {
     
     private String codigo;
