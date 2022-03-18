@@ -10,13 +10,12 @@ package grupodamers.modelo;
     * @author DAMERs Project POO
  */
 
-public class Cliente {
+public abstract class Cliente {
     
     private String nombre;
     private String domicilio;
     private String nif;
     private String email;
-    private boolean esPremium;
     
     /**
      * Metodo constructor por defecto
@@ -33,12 +32,11 @@ public class Cliente {
         * @param email Direccion email del cliente
     */ 
     
-    public Cliente(String nombre, String domicilio, String nif, String email, boolean esPremium){
+    public Cliente(String nombre, String domicilio, String nif, String email){
         this.nombre = nombre;
         this.domicilio = domicilio;
         this.nif = nif; 
         this.email = email;
-		this.esPremium = esPremium;
     }  
     
     /**
@@ -112,30 +110,25 @@ public class Cliente {
     public void setEmail(String email){
         this.email = email;
     }
-    
-    /**
-    * Metodo para saber si un cliente es premium
-        * @return  Devuelve un booleano la informacion
-    */
-    
-    public boolean getEsPremium(){
-        return this.esPremium;
-    }
-    
-    /**
-    * Metodo para registrar si un cliente es premium
-        * @param esPremium registrar cliente como premium
-    */ 
-    
-    public void setEsPremium(boolean esPremium){
-        this.esPremium = esPremium;
-    }
-    
-    /**
-    * Metodo para mostrar datos de un articulo
-    */ 
-    
-     public String toString() {
-        return "Pedido [nombre=" + nombre + ", domicilio=" + domicilio + ",  nif=" + nif + ", email=" + email + "]";
-    }
+     
+     /**
+      * 
+      * @return el tipo de cliente que es "Premium" o "Estandar"
+      */
+     
+     public abstract String tipoCliente();
+     
+     /**
+      * 
+      * @return 
+      */
+     
+     public abstract float calcAnual();
+     
+     /**
+      * 
+      * @return
+      */
+     
+     public abstract float descuentoEnv();
 }

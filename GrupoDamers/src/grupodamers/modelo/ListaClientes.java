@@ -1,9 +1,11 @@
 package grupodamers.modelo;
 
-public class ListaClientes {
+import java.util.ArrayList;
 
-	public ListaClientes() {
-		// TODO Auto-generated constructor stub
+public class ListaClientes extends Lista<Cliente> {
+
+	public ListaClientes(ArrayList<Cliente> lista) {
+		super(lista);
 	}
 
 }

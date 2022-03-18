@@ -5,6 +5,9 @@
  */
 package grupodamers.vista;
 
+import grupodamers.controlador.Controlador;
+import grupodamers.modelo.Datos;
+
 /**
  *
  * @author DAMERs Project POO
@@ -15,8 +18,14 @@ public class OnlineStore {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
     	System.out.println("Esto funciona");
+    	
+    	GestionOS vista = new GestionOS();
+    	Datos modelo = new Datos();
+    	Controlador controlador = new Controlador(modelo, vista);
+    	
+    	controlador.iniciarAplicacion();
+    	
     }
     
 }
