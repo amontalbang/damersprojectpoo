@@ -110,6 +110,13 @@ public abstract class Cliente {
     public void setEmail(String email){
         this.email = email;
     }
+    
+    public String toString() {
+    	return "Los datos del cliente son: [nombre=" + this.nombre + 
+    			"domicilio=" + this.domicilio + 
+    			"nif=" + this.nif + 
+    			"email=" + this.email + "]";
+    }
      
      /**
       * 

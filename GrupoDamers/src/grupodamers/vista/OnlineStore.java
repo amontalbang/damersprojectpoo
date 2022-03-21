@@ -24,7 +24,7 @@ public class OnlineStore {
     	Datos modelo = new Datos();
     	Controlador controlador = new Controlador(modelo, vista);
     	
-    	controlador.iniciarAplicacion();
+    	controlador.gestionMenu();
     	
     }
     

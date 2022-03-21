@@ -5,17 +5,22 @@
  */
 package grupodamers.modelo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  *
  * @author DAMERs Project POO
  */
 public class Pedido {
     
-    private int numPedido;
-    private String cliente;
-    private String articulo;
+    private String numPedido;
+    private Cliente cliente;
+    private Articulo articulo;
     private int cantidad;
     private String fecha;
+    private double precioEnvio;
+    private double precioTotal;
     
     /**
      * Metodo constructor por defecto
@@ -33,12 +38,14 @@ public class Pedido {
         * @param fecha fecha en la que se realiza el pedido
     */ 
     
-    public Pedido(int numPedido, String cliente, String articulo, int cantidad, String fecha){
+    public Pedido(String numPedido, Cliente cliente, Articulo articulo, int cantidad, String fecha){
         this.numPedido = numPedido;
         this.cliente = cliente;
         this.articulo = articulo; 
         this.cantidad = cantidad;
         this.fecha = fecha;
+        this.precioEnvio = this.precioEnvio();
+        this.precioTotal = this.precioTotal();
     }  
     
      /**
@@ -46,7 +53,7 @@ public class Pedido {
         * @return  Devuelve un int con el numero
     */
     
-    public int getNumPedido(){
+    public String getNumPedido(){
         return this.numPedido;
     }
     
@@ -55,7 +62,7 @@ public class Pedido {
         * @param numPedido Numero de pedido
     */ 
     
-    public void setNumPedido(int numPedido){
+    public void setNumPedido(String numPedido){
         this.numPedido = numPedido;
     }
     
@@ -64,7 +71,7 @@ public class Pedido {
         * @return  Devuelve un string con el cliente
     */
     
-    public String getCliente(){
+    public Cliente getCliente(){
         return this.cliente;
     }
     
@@ -73,7 +80,7 @@ public class Pedido {
         * @param cliente cliente registrado en un pedido
     */ 
     
-    public void setCliente(String cliente){
+    public void setCliente(Cliente cliente){
         this.cliente = cliente;
     }
     
@@ -82,7 +89,7 @@ public class Pedido {
         * @return  Devuelve un string con el articulo
     */
     
-    public String getArticulo(){
+    public Articulo getArticulo(){
         return this.articulo;
     }
     
@@ -91,7 +98,7 @@ public class Pedido {
         * @param articulo articulo registrado en un pedido
     */ 
     
-    public void setArticulo(String articulo){
+    public void setArticulo(Articulo articulo){
         this.articulo = articulo;
     }
     
@@ -136,6 +143,65 @@ public class Pedido {
     */ 
     
     public String toString() {
-        return "Pedido [numPedido=" + numPedido + ", cliente=" + cliente + ",  articulo=" + articulo + ", cantidad=" + cantidad + ", fecha=" + fecha + "]";
+    	if(this.pedidoEnviado()) {
+    		return "Pedido [numPedido=" + this.numPedido + ", nombre del cliente=" + this.cliente.getNombre() + ", NIF del cliente=" + this.cliente.getNif() + ",  codigo de articulo=" + this.articulo.getCodigo() +
+    				", precio del articulo=" + this.articulo.getPrecioVenta() + ", descripcion de articulo=" + this.articulo.getDescripcion() +
+    				", coste de envio del articulo=" + this.articulo.getGastosEnvio() + ", cantidad=" + this.cantidad + ", fecha=" + this.fecha + ", el coste total del envio= " +
+    				this.precioEnvio + ", el coste del pedido= " + this.precioTotal + ". El pedido ha sido enviado]";
+    		
+    	} else {
+    		return "Pedido [numPedido=" + this.numPedido + ", nombre del cliente=" + this.cliente.getNombre() + ", NIF del cliente=" + this.cliente.getNif() + ",  codigo de articulo=" + this.articulo.getCodigo() +
+    				", precio del articulo=" + this.articulo.getPrecioVenta() + ", descripcion de articulo=" + this.articulo.getDescripcion() +
+    				", coste de envio del articulo=" + this.articulo.getGastosEnvio() + ", cantidad=" + this.cantidad + ", fecha=" + this.fecha + ", el coste total del envio= " +
+    				this.precioEnvio + ", el coste del pedido= " + this.precioTotal + ". El pedido aun no ha sido enviado]";
+    	}
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    
+    public boolean pedidoEnviado() {
+    	LocalDateTime fechaEnvio;
+		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
+		
+		fechaEnvio = LocalDateTime.parse(this.fecha, fmt);
+		fechaEnvio = fechaEnvio.plusMinutes(this.articulo.getTiempoPrep());
+		
+		if (fechaEnvio.isBefore(LocalDateTime.now())) {
+			return true;
+		} else {
+			return false;
+		}
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    
+    public double precioEnvio() {
+    	double precio = 0;
+    	String tipoCliente = this.cliente.tipoCliente();
+    	
+    	if(tipoCliente.equals("premium")) {
+    		precio = this.articulo.getGastosEnvio() * 0.8;
+    	} else {
+    		precio = this.articulo.getGastosEnvio();
+    	}
+    	return precio;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    
+    public double precioTotal() {
+    	double precio = 0;
+    	
+    	precio = this.articulo.getPrecioVenta() * this.cantidad + this.precioEnvio;
+    	return precio;
     }
 }

@@ -30,7 +30,7 @@ public class ClientePremium extends Cliente{
 	 */
 	
 	public float calcAnual() {
-		float calc = 0;
+		float calc = 30;
 		return calc;
 	}
 	
@@ -40,7 +40,7 @@ public class ClientePremium extends Cliente{
 	 */
 
 	public float descuentoEnv() {
-		float descuento = 0;
+		float descuento = 20;
 		return descuento;
 	}
 
