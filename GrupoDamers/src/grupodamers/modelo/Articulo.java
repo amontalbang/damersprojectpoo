@@ -144,6 +144,6 @@ public class Articulo {
     */ 
     
      public String toString() {
-        return "Pedido [codigo=" + codigo + ", descripcion=" + descripcion + ",  precioVenta=" + precioVenta + ", gastosEnvio=" + gastosEnvio + ", tiempoPrep=" + tiempoPrep + "]";
+        return "Articulo [codigo= " + this.codigo + ", descripcion= " + this.descripcion + ",  precioVenta= " + this.precioVenta + "€, gastosEnvio= " + this.gastosEnvio + "€, tiempoPrep= " + this.tiempoPrep + "minutos]\n";
     }
 }

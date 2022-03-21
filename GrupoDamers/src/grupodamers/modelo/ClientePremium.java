@@ -15,6 +15,14 @@ public class ClientePremium extends Cliente{
 	}
 	
 	/**
+	 * Contructor vacio
+	 */
+	
+	public ClientePremium() {
+		super();
+	}
+	
+	/**
 	 * Implementación del método tipoCliente()
 	 * @return el tipo de cliente
 	 */
@@ -43,5 +51,16 @@ public class ClientePremium extends Cliente{
 		float descuento = 20;
 		return descuento;
 	}
+	
+	/**
+	 * 
+	 */
+	
+	public String toString() {
+    	return "Los datos del cliente premium son: [nombre= " + super.getNombre() + 
+    			" domicilio= " + super.getDomicilio() + 
+    			" nif= " + super.getNif() + 
+    			" email= " + super.getEmail() + "]";
+    }
 
 }

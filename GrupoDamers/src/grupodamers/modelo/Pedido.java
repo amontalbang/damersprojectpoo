@@ -144,16 +144,16 @@ public class Pedido {
     
     public String toString() {
     	if(this.pedidoEnviado()) {
-    		return "Pedido [numPedido=" + this.numPedido + ", nombre del cliente=" + this.cliente.getNombre() + ", NIF del cliente=" + this.cliente.getNif() + ",  codigo de articulo=" + this.articulo.getCodigo() +
-    				", precio del articulo=" + this.articulo.getPrecioVenta() + ", descripcion de articulo=" + this.articulo.getDescripcion() +
-    				", coste de envio del articulo=" + this.articulo.getGastosEnvio() + ", cantidad=" + this.cantidad + ", fecha=" + this.fecha + ", el coste total del envio= " +
-    				this.precioEnvio + ", el coste del pedido= " + this.precioTotal + ". El pedido ha sido enviado]";
+    		return "Pedido [numPedido= " + this.numPedido + ", nombre del cliente= " + this.cliente.getNombre() + ", NIF del cliente= " + this.cliente.getNif() + ",  codigo de articulo= " + this.articulo.getCodigo() +
+    				", precio del articulo= " + this.articulo.getPrecioVenta() + ", descripcion de articulo= " + this.articulo.getDescripcion() +
+    				", coste de envio del articulo= " + this.articulo.getGastosEnvio() + ", cantidad= " + this.cantidad + ", fecha= " + this.fecha + ", el coste total del envio= " +
+    				String.format("%.2f", this.precioEnvio) + ", el coste del pedido= " + this.precioTotal + ". El pedido ha sido enviado]\n";
     		
     	} else {
-    		return "Pedido [numPedido=" + this.numPedido + ", nombre del cliente=" + this.cliente.getNombre() + ", NIF del cliente=" + this.cliente.getNif() + ",  codigo de articulo=" + this.articulo.getCodigo() +
-    				", precio del articulo=" + this.articulo.getPrecioVenta() + ", descripcion de articulo=" + this.articulo.getDescripcion() +
-    				", coste de envio del articulo=" + this.articulo.getGastosEnvio() + ", cantidad=" + this.cantidad + ", fecha=" + this.fecha + ", el coste total del envio= " +
-    				this.precioEnvio + ", el coste del pedido= " + this.precioTotal + ". El pedido aun no ha sido enviado]";
+    		return "Pedido [numPedido= " + this.numPedido + ", nombre del cliente= " + this.cliente.getNombre() + ", NIF del cliente= " + this.cliente.getNif() + ",  codigo de articulo= " + this.articulo.getCodigo() +
+    				", precio del articulo= " + this.articulo.getPrecioVenta() + ", descripcion de articulo= " + this.articulo.getDescripcion() +
+    				", coste de envio del articulo= " + this.articulo.getGastosEnvio() + ", cantidad=" + this.cantidad + ", fecha= " + this.fecha + ", el coste total del envio= " +
+    				String.format("%.2f", this.precioEnvio) + ", el coste del pedido= " + this.precioTotal + ". El pedido aun no ha sido enviado]\n";
     	}
     }
     
@@ -164,7 +164,7 @@ public class Pedido {
     
     public boolean pedidoEnviado() {
     	LocalDateTime fechaEnvio;
-		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
+		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		
 		fechaEnvio = LocalDateTime.parse(this.fecha, fmt);
 		fechaEnvio = fechaEnvio.plusMinutes(this.articulo.getTiempoPrep());

@@ -5,6 +5,14 @@ import java.time.format.DateTimeFormatter;
 
 public class ListaPedidos extends Lista<Pedido> {
 	
+	public void addElement(Pedido pedido) throws Exception{
+		if (existe(pedido.getNumPedido())) {
+			throw new Exception("Ya existe un pedido con ese número.\n");
+		} else {
+			this.lista.add(pedido);
+		}
+	}
+	
 	public boolean existe(String numPedido) {
 		boolean existe = false;
 		
@@ -39,7 +47,7 @@ public class ListaPedidos extends Lista<Pedido> {
 	
 	private boolean validDelete(Pedido pedido) {
 		LocalDateTime fechaLimite;
-		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
+		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		
 		fechaLimite = LocalDateTime.parse(pedido.getFecha(), fmt);
 		fechaLimite = fechaLimite.plusMinutes(pedido.getArticulo().getTiempoPrep());

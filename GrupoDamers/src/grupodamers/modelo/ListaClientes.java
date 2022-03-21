@@ -1,13 +1,10 @@
 package grupodamers.modelo;
 
-import java.util.ArrayList;
-
 public class ListaClientes extends Lista<Cliente> {
 
 	public void addElement(Cliente cliente) throws Exception{
-		ArrayList<Cliente> clientes = new ArrayList<Cliente>();
 		if (existe(cliente.getNif())) {
-			throw new Exception("Ya existe un cliente registrado con ese NIF.");
+			throw new Exception("Ya existe un cliente registrado con ese NIF.\n");
 		} else {
 			this.lista.add(cliente);
 		}
@@ -24,6 +21,19 @@ public class ListaClientes extends Lista<Cliente> {
 		}
 		
 		return existe;
+	}
+	
+	public Cliente getClienteByNif(String nif) {
+		Cliente cliente = null;
+		
+		for (Cliente c: this.lista) {
+			if (c.getNif().equals(nif)) {
+				cliente = c;
+				break;
+			}
+		}
+		return cliente;
+		
 	}
 
 }

@@ -41,10 +41,10 @@ public class Controlador {
 				this.mostrarClientes();
 				break;
 			case "6":
-				this.mostrarEstandar();
+				this.mostrarPremium();
 				break;
 			case "7":
-				this.mostrarPremium();
+				this.mostrarEstandar();
 				break;
 			case "8":
 				this.mostrarArticulos();
@@ -90,10 +90,13 @@ public class Controlador {
 
 	public void addPedido() {
 		HashMap<String, String> entrada;
-		String nif, numArticulo, cantidad, fecha;
+		String nif, numArticulo, cantidad, fecha, numPedido;
 		int cantidadInt;
+		Cliente cliente;
+		Articulo articulo;
 
 		entrada = this.vista.registerPedido();
+		numPedido = entrada.get("numPedido");
 		nif = entrada.get("nif");
 		numArticulo = entrada.get("numArticulo");
 		cantidad = entrada.get("cantidad");
@@ -106,10 +109,14 @@ public class Controlador {
 				this.vista.mostrarInfoError("El articulo que desea introducir en el pedido no existe.");
 			} else if (!this.datos.existeElemento(nif, "cliente")) {
 				this.vista.registerCliente(true);
-				this.datos.addPedido(nif, numArticulo, cantidadInt, fecha);
+				cliente = this.datos.getClienteByNif(nif);
+				articulo = this.datos.getArticuloByCodigo(numArticulo);
+				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
 				this.vista.mostrarInfo("El pedido ha sido registrado correctamente.\n");
 			} else {
-				this.datos.addPedido(nif, numArticulo, cantidadInt, fecha);
+				cliente = this.datos.getClienteByNif(nif);
+				articulo = this.datos.getArticuloByCodigo(numArticulo);
+				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
 				this.vista.mostrarInfo("El pedido ha sido registrado correctamente.\n");
 			}
 		} catch (NumberFormatException e) {
@@ -121,25 +128,28 @@ public class Controlador {
 
 	private void addArticulo() {
 		HashMap<String, String> entrada;
-		String descripcion, precioVenta, gastosEnvio, tiempoPrep;
+		String descripcion, precioVenta, gastosEnvio, tiempoPrep, codigo;
 		int tiempoPrepInt;
 		double precioVentaInt, gastosEnvioInt;
 
 		entrada = this.vista.registerArticulo();
+		codigo = entrada.get("codigo");
 		descripcion = entrada.get("descripcion");
 		precioVenta = entrada.get("precioVenta");
 		gastosEnvio = entrada.get("gastosEnvio");
-		tiempoPrep = entrada.get("tiempoPrep");
+		tiempoPrep = entrada.get("tiempoPreparacion");
 		try {
 			precioVentaInt = Double.parseDouble(precioVenta);
 			gastosEnvioInt = Double.parseDouble(gastosEnvio);
 			tiempoPrepInt = Integer.parseInt(tiempoPrep);
-			this.datos.addArticulo(descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
+			this.datos.addArticulo(codigo, descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
 			this.vista.mostrarInfo("El articulo ha sido registrado correctamente.");
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("El formato de los campos no es valido, revíselo\n");
+			e.printStackTrace();
 		} catch (Exception e) {
 			this.vista.mostrarInfoError(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -150,6 +160,7 @@ public class Controlador {
 		if (this.datos.existeElemento(numPedido, "pedido")) {
 			try {
 				this.datos.deletePedido(numPedido);
+				this.vista.mostrarInfo("El pedido se ha eliminado correctamente.");
 			} catch (Exception e) {
 				this.vista.mostrarInfoError(e.getMessage());
 			}
@@ -176,7 +187,7 @@ public class Controlador {
 		clientes = this.datos.getClientes();
 		for (Cliente cliente : clientes) {
 			if (cliente.tipoCliente().equals("estandar")) {
-				contenido.add(clientes.toString());
+				contenido.add(cliente.toString());
 			}
 		}
 		this.vista.mostrarListado(contenido, "cliente");
@@ -189,7 +200,7 @@ public class Controlador {
 		clientes = this.datos.getClientes();
 		for (Cliente cliente : clientes) {
 			if (cliente.tipoCliente().equals("premium")) {
-				contenido.add(clientes.toString());
+				contenido.add(cliente.toString());
 			}
 		}
 		this.vista.mostrarListado(contenido, "cliente");
@@ -236,6 +247,7 @@ public class Controlador {
 			this.vista.mostrarListado(contenido, "pedido");
 		} catch (Exception e) {
 			this.vista.mostrarInfoError(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

@@ -10,12 +10,14 @@ public class Datos {
 
 	public Datos() {}
 	
-	public void addArticulo(String descripcion, double precioVenta, double gastoEnvio, int tiempoPreparacion ) throws Exception {
-		this.listaArticulos.addElement(new Articulo());
+	public void addArticulo(String codigo, String descripcion, double precioVenta, double gastoEnvio, int tiempoPreparacion ) throws Exception {
+		Articulo articulo = new Articulo(codigo, descripcion, precioVenta, gastoEnvio, tiempoPreparacion);
+		this.listaArticulos.addElement(articulo);
 	}
 	
-	public void addPedido(String cliente, String articulo, int cantidad, String fecha) throws Exception {
-		this.listaPedidos.addElement(new Pedido());
+	public void addPedido(String numPedido, Cliente cliente, Articulo articulo, int cantidad, String fecha) throws Exception {
+		Pedido pedido = new Pedido(numPedido, cliente, articulo, cantidad, fecha);
+		this.listaPedidos.addElement(pedido);
 	}
 	
 	public void addCliente (String nombre, String domicilio, String nif, String email, boolean isPremium) throws Exception {
@@ -66,6 +68,18 @@ public class Datos {
 		
 		Pedido pedido = this.listaPedidos.getPedidoByNumPedido(numPedido);
 		this.listaPedidos.deleteElement(pedido);
+	}
+	
+	public Cliente getClienteByNif(String nif) {
+		return this.listaClientes.getClienteByNif(nif);
+	}
+	
+	public Articulo getArticuloByCodigo(String codigo) {
+		return this.listaArticulos.getArticuloByCodigo(codigo);
+	}
+	
+	public Pedido getPedidoByNumPedido(String numPedido) {
+		return this.listaPedidos.getPedidoByNumPedido(numPedido);
 	}
 
 }

@@ -15,6 +15,14 @@ public class ClienteEstandar extends Cliente{
 	}
 	
 	/**
+	 * Contructor vacio
+	 */
+	
+	public ClienteEstandar() {
+		super();
+	}
+	
+	/**
 	 * Implementación del método tipoCliente()
 	 * @return el tipo de cliente
 	 */
@@ -49,7 +57,10 @@ public class ClienteEstandar extends Cliente{
 	 * @return 
 	 */ 
 	    
-     public String toString() {
-        return "Los datos del cliente estandar son: ...";
-     }
+	public String toString() {
+    	return "Los datos del cliente estandar son: [nombre= " + super.getNombre() + 
+    			" domicilio= " + super.getDomicilio() + 
+    			" nif= " + super.getNif() + 
+    			" email= " + super.getEmail() + "]";
+    }
 }

@@ -4,7 +4,7 @@ public class ListaArticulos extends Lista<Articulo> {
 
 	public void addElement(Articulo articulo) throws Exception{
 		if (existe(articulo.getCodigo())) {
-			throw new Exception("El articulo introducido ya existe en la BBDD.");
+			throw new Exception("El articulo introducido ya existe en la BBDD.\n");
 		} else {
 			this.lista.add(articulo);
 		}
@@ -20,6 +20,18 @@ public class ListaArticulos extends Lista<Articulo> {
 			}
 		}
 		return existe;
+	}
+	
+	public Articulo getArticuloByCodigo(String codigo) {
+		Articulo articulo = new Articulo();
+		
+		for (Articulo a: this.lista) {
+			if (a.getCodigo().equals(codigo)) {
+				articulo = a;
+				break;
+			}
+		}
+		return articulo;
 	}
 
 }

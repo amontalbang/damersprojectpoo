@@ -1,7 +1,6 @@
 package grupodamers.vista;
 
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,10 +8,10 @@ import java.util.ArrayList;
 
 public class GestionOS {
 	
-	Scanner lector = this.lector = new Scanner(System.in);
-	HashMap<String, String> cliente = new HashMap<String, String>();
-	HashMap<String, String> pedido = new HashMap<String, String>();
-	HashMap<String, String> articulo = new HashMap<String, String>();
+	static Scanner lector = new Scanner(System.in);
+	static HashMap<String, String> cliente = new HashMap<String, String>();
+	static HashMap<String, String> pedido = new HashMap<String, String>();
+	static HashMap<String, String> articulo = new HashMap<String, String>();
 	
 	public GestionOS() {}
 	
@@ -41,27 +40,30 @@ public class GestionOS {
 	
 	public HashMap<String, String> registerArticulo() {
 		String entrada = "";
-		this.lector = new Scanner(System.in);
+		articulo.clear();
 		
+		System.out.println("Introduce el codigo del articulo: ");
+		entrada = lector.nextLine();
+		articulo.put("codigo", entrada);
 		System.out.println("Introduce descripcion del articulo: ");
-		entrada = lector.next();
-		cliente.put("descripcion", entrada);
+		entrada = lector.nextLine();
+		articulo.put("descripcion", entrada);
 		System.out.println("Introduce precio de venta del articulo: ");
-		entrada = lector.next();
-		cliente.put("precioVenta", entrada);
+		entrada = lector.nextLine();
+		articulo.put("precioVenta", entrada);
 		System.out.println("Introduce gastos de envio del articulo: ");
-		entrada = lector.next();
-		cliente.put("gastosEnvio", entrada);
+		entrada = lector.nextLine();
+		articulo.put("gastosEnvio", entrada);
 		System.out.println("Introduce tiempo de preparacion del articulo: ");
-		entrada = lector.next();
-		cliente.put("tiempoPreparacion", entrada);
+		entrada = lector.nextLine();
+		articulo.put("tiempoPreparacion", entrada);
 		
-		return this.articulo;
+		return articulo;
 	}
 	
 	public HashMap<String, String> registerCliente(boolean showInfo) {
 		String entrada = "";
-		this.lector = new Scanner(System.in);
+		cliente.clear();
 		
 		if (showInfo) {
 			System.out.println("El cliente no existe y debe registrarlo previamente.");
@@ -74,47 +76,48 @@ public class GestionOS {
 		System.out.println("Introduce domicilio del cliente: ");
 		entrada = lector.nextLine();
 		cliente.put("domicilio", entrada);
-		// meter un excepción de formato de nif
 		System.out.println("Introduce nif del cliente: ");
 		entrada = lector.nextLine();
 		cliente.put("nif", entrada);
-		// excepcion de formato de email
 		System.out.println("Introduce email del cliente: ");
 		entrada = lector.nextLine();
 		cliente.put("email", entrada);
-		// excepcion de formato S o N
 		System.out.println("¿El cliente es premium? (S / N)");
 		entrada = lector.nextLine();
 		cliente.put("isPremium", entrada);
 		
-		return this.cliente;
+		return cliente;
 	}
 	
 	public HashMap<String, String> registerPedido() {
 		String entrada = "";
+		pedido.clear();
 		LocalDateTime date = LocalDateTime.now();
-		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
+		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		
+		System.out.println("Introduce el numero de pedido: ");
+		entrada = lector.nextLine();
+		pedido.put("numPedido", entrada);
 		System.out.println("Introduce el nif del cliente que realiza el pedido: ");
 		entrada = lector.nextLine();
-		cliente.put("nif", entrada);
+		pedido.put("nif", entrada);
 		System.out.println("Introduce el numero de articulo: ");
 		entrada = lector.nextLine();
-		cliente.put("numArticulo", entrada);
+		pedido.put("numArticulo", entrada);
 		System.out.println("Introduce la cantidad: ");
 		entrada = lector.nextLine();
-		cliente.put("cantidad", entrada);
+		pedido.put("cantidad", entrada);
 		entrada = date.format(fmt);
-		cliente.put("fecha", entrada);
+		pedido.put("fecha", entrada);
 		
-		return this.pedido;
+		return pedido;
 	}
 	
 	public String deletePedido() {
 		String numPedido;
 		
 		System.out.println("Introduce el numero del pedido que queremos eliminar: ");
-		numPedido = lector.next();
+		numPedido = lector.nextLine();
 		return numPedido;
 	}
 	
@@ -144,18 +147,17 @@ public class GestionOS {
 	}
 	
 	public String filtroListadoPedidos() throws Exception{
-		String filtro2 = "ninguno";
-		char filtro1;
+		String filtro1, filtro2 = "ninguno";
 		
 		System.out.println("Desea filtrar por tipo de cliente (S / N): ");
-		filtro1 = lector.next().charAt(0);
-		if(filtro1 == 'S' || filtro1 == 'N') {
+		filtro1 = lector.nextLine().toUpperCase();
+		if(!filtro1.equals("S") && !filtro1.equals("N")) {
 			throw new Exception("Opcion no contemplada");
 		} else {
-			if (filtro1 == 'S') {
+			if (filtro1 == "S") {
 				System.out.println("Seleccione el tipo (premium / estandar): ");
-				filtro2 = lector.next();
-				if(filtro2.equals("premium") || filtro2.equals("estandar")) {
+				filtro2 = lector.nextLine().toLowerCase();
+				if(!filtro2.equals("premium") && !filtro2.equals("estandar")) {
 					throw new Exception("Opcion no contemplada");
 				} else {
 					return filtro2;
@@ -164,5 +166,4 @@ public class GestionOS {
 		}
 		return filtro2;
 	}
-
 }

@@ -112,10 +112,10 @@ public abstract class Cliente {
     }
     
     public String toString() {
-    	return "Los datos del cliente son: [nombre=" + this.nombre + 
-    			"domicilio=" + this.domicilio + 
-    			"nif=" + this.nif + 
-    			"email=" + this.email + "]";
+    	return "Los datos del cliente son: [nombre= " + this.nombre + 
+    			" domicilio= " + this.domicilio + 
+    			" nif= " + this.nif + 
+    			" email= " + this.email + "]\n";
     }
      
      /**
