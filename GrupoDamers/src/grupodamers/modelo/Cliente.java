@@ -119,22 +119,22 @@ public abstract class Cliente {
     }
      
      /**
-      * 
+      * Metodo para conocer el tipo de cliente
       * @return el tipo de cliente que es "Premium" o "Estandar"
       */
      
      public abstract String tipoCliente();
      
      /**
-      * 
-      * @return 
+      * Metodo para obtener el calculo anual
+      * @return el calculo del precio anual
       */
      
      public abstract float calcAnual();
      
      /**
-      * 
-      * @return
+      * Metodo para obtener el porcentaje de descuento
+      * @return el descuento que se debe aplicar
       */
      
      public abstract float descuentoEnv();

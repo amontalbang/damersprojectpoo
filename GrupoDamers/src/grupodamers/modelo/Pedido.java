@@ -158,8 +158,8 @@ public class Pedido {
     }
     
     /**
-     * 
-     * @return
+     * Metodo que comprueba si un pedido ha sido enviado
+     * @return boolean pedidoEnviado
      */
     
     public boolean pedidoEnviado() {
@@ -177,8 +177,8 @@ public class Pedido {
     }
     
     /**
-     * 
-     * @return
+     * Metodo para calcular el precio del envio
+     * @return double precio
      */
     
     public double precioEnvio() {
@@ -194,8 +194,8 @@ public class Pedido {
     }
     
     /**
-     * 
-     * @return
+     * Metodo para calcular el precio total del pedido
+     * @return double precioTotal
      */
     
     public double precioTotal() {

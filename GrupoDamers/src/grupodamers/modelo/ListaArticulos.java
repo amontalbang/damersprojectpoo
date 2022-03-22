@@ -1,14 +1,23 @@
 package grupodamers.modelo;
 
 public class ListaArticulos extends Lista<Articulo> {
+	
+	/**
+	 * Metodo que añade un articulo a la lista de articulos
+	 */
 
 	public void addElement(Articulo articulo) throws Exception{
 		if (existe(articulo.getCodigo())) {
-			throw new Exception("El articulo introducido ya existe en la BBDD.\n");
+			throw new Exception("\n*** El articulo introducido ya existe en la BBDD. ***\n");
 		} else {
 			this.lista.add(articulo);
 		}
 	}
+	
+	/**
+	 * Metodo que comprueba si existe un articulo
+	 * @return boolean existe
+	 */
 	
 	public boolean existe(String codigoArt) {
 		boolean existe = false;
@@ -21,6 +30,11 @@ public class ListaArticulos extends Lista<Articulo> {
 		}
 		return existe;
 	}
+	
+	/**
+	 * Metodo que devuelve un articulo dado un codigo de articulo
+	 * @return articulo
+	 */
 	
 	public Articulo getArticuloByCodigo(String codigo) {
 		Articulo articulo = new Articulo();
