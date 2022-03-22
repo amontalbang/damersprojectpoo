@@ -70,7 +70,7 @@ public class Controlador {
 		String nombre, domicilio, email, nif;
 		boolean isPremium;
 
-		entrada = this.vista.registerCliente(false);
+		entrada = this.vista.registerCliente();
 		nombre = entrada.get("nombre");
 		domicilio = entrada.get("domicilio");
 		email = entrada.get("email");
@@ -108,7 +108,8 @@ public class Controlador {
 			if (!this.datos.existeElemento(numArticulo, "articulo")) {
 				this.vista.mostrarInfoError("El articulo que desea introducir en el pedido no existe.");
 			} else if (!this.datos.existeElemento(nif, "cliente")) {
-				this.vista.registerCliente(true);
+				this.vista.mostrarInfoError("El cliente no existe y debe registrarlo previamente.\n");
+				this.addCliente();
 				cliente = this.datos.getClienteByNif(nif);
 				articulo = this.datos.getArticuloByCodigo(numArticulo);
 				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
