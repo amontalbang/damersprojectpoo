@@ -37,16 +37,21 @@ public class ListaClientes extends Lista<Cliente> {
 	 * @return cliente
 	 */
 	
-	public Cliente getClienteByNif(String nif) {
+	public Cliente getClienteByNif(String nif) throws Exception {
 		Cliente cliente = null;
 		
-		for (Cliente c: this.lista) {
-			if (c.getNif().equals(nif)) {
-				cliente = c;
-				break;
+		if (existe(nif)) {
+			for (Cliente c: this.lista) {
+				if (c.getNif().equals(nif)) {
+					cliente = c;
+					break;
+				}
 			}
+			return cliente;	
+		} else {
+			throw new Exception("\n***El cliente no existe***\n");
 		}
-		return cliente;
+		
 		
 	}
 

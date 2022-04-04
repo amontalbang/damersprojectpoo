@@ -112,17 +112,19 @@ public class Datos {
 
 	/**
 	 * Metodo que obtiene un cliente dado un NIF
+	 * @throws Exception 
 	 */
 
-	public Cliente getClienteByNif(String nif) {
+	public Cliente getClienteByNif(String nif) throws Exception {
 		return this.listaClientes.getClienteByNif(nif);
 	}
 
 	/**
 	 * Metodo que obtiene un articulo dado un codigo de articulo
+	 * @throws Exception 
 	 */
 
-	public Articulo getArticuloByCodigo(String codigo) {
+	public Articulo getArticuloByCodigo(String codigo) throws Exception {
 		return this.listaArticulos.getArticuloByCodigo(codigo);
 	}
 

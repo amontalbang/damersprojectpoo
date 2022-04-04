@@ -38,7 +38,6 @@ public class Controlador {
 				break;
 			case "2":
 				this.mostrarArticulos();
-				
 				break;
 			case "3":
 				this.addCliente();
@@ -65,13 +64,13 @@ public class Controlador {
 				this.mostrarPedidosEnviados();
 				break;
 			case "11":
+				this.vista.mostrarInfo("\n***Gracias por utilizar nuestra aplicación.***\n");
 				break;
 			default:
 				this.vista.mostrarInfoError("\n*** La opcion introducida no coincide con ninguna de las disponibles ***");
 				break;
 			}
 		}
-		System.out.println("La opcion escogida es " + opt);
 	}
 	
 	/**
@@ -81,23 +80,28 @@ public class Controlador {
 	public void addCliente() {
 		HashMap<String, String> entrada;
 		String nombre, domicilio, email, nif;
-		boolean isPremium;
+		boolean isPremium = false, valido = true;;
 
-		entrada = this.vista.registerCliente(false);
+		entrada = this.vista.registerCliente();
 		nombre = entrada.get("nombre");
 		domicilio = entrada.get("domicilio");
 		email = entrada.get("email");
 		nif = entrada.get("nif");
-		if (entrada.get("isPremium").toUpperCase().equals("S")) {
+		if (entrada.get("isPremium").equals("S")) {
 			isPremium = true;
-		} else {
+		} else if (entrada.get("isPremium").equals("N")){
 			isPremium = false;
+		} else {
+			valido = false;
+			this.vista.mostrarInfoError("\n***El tipo del cliente no es válido***\n");
 		}
-		try {
-			this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
-			this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");
-		} catch (Exception e) {
-			this.vista.mostrarInfoError(e.getMessage());
+		if (valido) {
+			try {
+				this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
+				this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");
+			} catch (Exception e) {
+				this.vista.mostrarInfoError(e.getMessage());
+			}			
 		}
 	}
 	
@@ -122,9 +126,8 @@ public class Controlador {
 
 		try {
 			cantidadInt = Integer.parseInt(cantidad);
-			if (!this.datos.existeElemento(numArticulo, "articulo")) {
-				this.vista.mostrarInfoError("\n*** El articulo que desea introducir en el pedido no existe. ***");
-			} else if (!this.datos.existeElemento(nif, "cliente")) {
+			if (!this.datos.existeElemento(nif, "cliente")) {
+				this.vista.mostrarInfoError("\n***El cliente no existe y debe ser registrado***\n");
 				this.addCliente();
 				cliente = this.datos.getClienteByNif(nif);
 				articulo = this.datos.getArticuloByCodigo(numArticulo);
@@ -170,7 +173,6 @@ public class Controlador {
 			e.printStackTrace();
 		} catch (Exception e) {
 			this.vista.mostrarInfoError(e.getMessage());
-			e.printStackTrace();
 		}
 	}
 	
@@ -269,15 +271,10 @@ public class Controlador {
 		pedidos = this.datos.getPedidos();
 		try {
 			filtro = this.vista.filtroListadoPedidos();
-			if (filtro.equals("premium")) {
+			if (!filtro.equals("ninguno")) {
+				Cliente cliente = this.datos.getClienteByNif(filtro);
 				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("premium") && !pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
-					}
-				});
-			} else if (filtro.equals("estandar")) {
-				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("estandar") && !pedido.pedidoEnviado()) {
+					if (pedido.getCliente().getNif().equals(cliente.getNif()) && !pedido.pedidoEnviado()) {
 						contenido.add(pedido.toString());
 					}
 				});
@@ -307,15 +304,10 @@ public class Controlador {
 		pedidos = this.datos.getPedidos();
 		try {
 			filtro = this.vista.filtroListadoPedidos();
-			if (filtro.equals("premium")) {
+			if (!filtro.equals("ninguno")) {
+				Cliente cliente = this.datos.getClienteByNif(filtro);
 				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("premium") && pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
-					}
-				});
-			} else if (filtro.equals("estandar")) {
-				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("estandar") && pedido.pedidoEnviado()) {
+					if (pedido.getCliente().getNif().equals(cliente.getNif()) && pedido.pedidoEnviado()) {
 						contenido.add(pedido.toString());
 					}
 				});

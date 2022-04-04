@@ -36,16 +36,21 @@ public class ListaArticulos extends Lista<Articulo> {
 	 * @return articulo
 	 */
 	
-	public Articulo getArticuloByCodigo(String codigo) {
+	public Articulo getArticuloByCodigo(String codigo) throws Exception {
 		Articulo articulo = new Articulo();
 		
-		for (Articulo a: this.lista) {
-			if (a.getCodigo().equals(codigo)) {
-				articulo = a;
-				break;
+		if (existe(codigo)) {
+			for (Articulo a: this.lista) {
+				if (a.getCodigo().equals(codigo)) {
+					articulo = a;
+					break;
+				}
 			}
+			return articulo;			
+		} else {
+			throw new Exception("\n*** El artículo no existe. ***\n");
 		}
-		return articulo;
+		
 	}
 
 }

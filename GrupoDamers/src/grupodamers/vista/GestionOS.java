@@ -87,13 +87,9 @@ public class GestionOS {
 	 * @return cliente
 	 */
 
-	public HashMap<String, String> registerCliente(boolean showInfo) {
+	public HashMap<String, String> registerCliente() {
 		String entrada = "";
 		cliente.clear();
-
-		if (showInfo) {
-			System.out.println("\n*** El cliente no existe y debe registrarlo previamente. ***\n");
-		}
 
 		System.out.println("\nIntroduce nombre del cliente: ");
 		entrada = lector.nextLine();
@@ -102,13 +98,13 @@ public class GestionOS {
 		entrada = lector.nextLine();
 		cliente.put("domicilio", entrada);
 		System.out.println("\nIntroduce nif del cliente: ");
-		entrada = lector.nextLine();
+		entrada = lector.nextLine().toUpperCase();
 		cliente.put("nif", entrada);
 		System.out.println("\nIntroduce email del cliente: ");
 		entrada = lector.nextLine();
 		cliente.put("email", entrada);
 		System.out.println("\n¿El cliente es premium? (S / N)");
-		entrada = lector.nextLine();
+		entrada = lector.nextLine().toUpperCase();
 		cliente.put("isPremium", entrada);
 
 		return cliente;
@@ -200,37 +196,17 @@ public class GestionOS {
 	public String filtroListadoPedidos() throws Exception {
 		String filtro1, filtro2 = "ninguno";
 
-		System.out.println("\nDesea filtrar por tipo de cliente (S / N): ");
+		System.out.println("\nDesea filtrar por cliente (S / N): ");
 		filtro1 = lector.nextLine().toUpperCase();
 		if (!filtro1.equals("S") && !filtro1.equals("N")) {
 			throw new Exception("*** Opcion no contemplada ***");
 		} else {
-			if (filtro1 == "S") {
-				System.out.println("\nSeleccione el tipo (premium / estandar): ");
-				filtro2 = lector.nextLine().toLowerCase();
-				if (!filtro2.equals("premium") && !filtro2.equals("estandar")) {
-					throw new Exception("*** Opcion no contemplada ***");
-				} else {
-					return filtro2;
-				}
+			if (filtro1.equals("S")) {
+				System.out.println("\nIntroduzca el nif del cliente por el que quiere filtrar: ");
+				filtro2 = lector.nextLine().toUpperCase();
+				return filtro2;
 			}
 		}
 		return filtro2;
 	}
-		
-		/*System.out.println("\nDesea filtrar por tipo de cliente (S / N): ");
-		filtro1 = lector.nextLine().toUpperCase();
-		if (!filtro1.equals("S") && !filtro1.equals("N")) {
-			throw new Exception("*** Opcion no contemplada ***");
-		} else {
-			if (filtro1 == "S") {
-				System.out.println("\nIntroduce el nif del cliente: ");
-				codigo = lector.nextLine();
-				if (existeElemento(codigo, "pedido") == true) {
-					
-				}
-			}
-		}
-		return codigo;
-	}*/
 }
