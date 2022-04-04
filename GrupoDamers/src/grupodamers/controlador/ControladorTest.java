@@ -36,7 +36,7 @@ public class ControladorTest {
 
 		entrada = this.map;
 		if (entrada.isEmpty()) {
-			fail("La entrada no se ha registrado correctamente");
+			fail("*** La entrada no se ha registrado correctamente ***");
 		}
 		nombre = entrada.get("nombre");
 		assertTrue("Alberto".equals(nombre));

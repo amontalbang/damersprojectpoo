@@ -1,5 +1,9 @@
 package grupodamers.modelo;
 
+/**
+ * Metodo que contiene los metodos de la clase cliente Premium
+ */
+
 public class ClientePremium extends Cliente{
 	
 	/**
@@ -60,7 +64,7 @@ public class ClientePremium extends Cliente{
     	return "Los datos del cliente premium son: [nombre= " + super.getNombre() + 
     			" domicilio= " + super.getDomicilio() + 
     			" nif= " + super.getNif() + 
-    			" email= " + super.getEmail() + "]";
+    			" email= " + super.getEmail() + "]\n";
     }
 
 }

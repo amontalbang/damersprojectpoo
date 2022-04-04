@@ -15,10 +15,10 @@ import grupodamers.modelo.Datos;
 public class OnlineStore {
 
     /**
+     * 
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    	System.out.println("Esto funciona");
     	
     	GestionOS vista = new GestionOS();
     	Datos modelo = new Datos();

@@ -6,6 +6,10 @@ import java.util.HashMap;
 import grupodamers.modelo.*;
 import grupodamers.vista.GestionOS;
 
+/**
+ * Metodo que contiene los metodos de la clase Controlador
+ */
+
 public class Controlador {
 
 	Datos datos;
@@ -15,6 +19,10 @@ public class Controlador {
 		this.datos = datos;
 		this.vista = vista;
 	}
+	
+	/**
+	 * Metodo que implementa el menu principal
+	 */
 
 	public void gestionMenu() {
 		String opt = "0";
@@ -26,28 +34,28 @@ public class Controlador {
 				this.gestionMenu();
 				break;
 			case "1":
-				this.addCliente();
+				this.addArticulo();				
 				break;
 			case "2":
-				this.addPedido();
+				this.mostrarArticulos();
 				break;
 			case "3":
-				this.addArticulo();
+				this.addCliente();
 				break;
 			case "4":
-				this.deletePedido();
+				this.mostrarClientes();				
 				break;
 			case "5":
-				this.mostrarClientes();
+				this.mostrarEstandar();
 				break;
 			case "6":
 				this.mostrarPremium();
 				break;
 			case "7":
-				this.mostrarEstandar();
+				this.addPedido();
 				break;
 			case "8":
-				this.mostrarArticulos();
+				this.deletePedido();
 				break;
 			case "9":
 				this.mostrarPedidosPendientes();
@@ -56,37 +64,50 @@ public class Controlador {
 				this.mostrarPedidosEnviados();
 				break;
 			case "11":
+				this.vista.mostrarInfo("\n***Gracias por utilizar nuestra aplicación.***\n");
 				break;
 			default:
-				this.vista.mostrarInfoError("La opcion introducida no coincide con ninguna de las disponibles");
+				this.vista.mostrarInfoError("\n*** La opcion introducida no coincide con ninguna de las disponibles ***");
 				break;
 			}
 		}
-		System.out.println("La opcion escogida es " + opt);
 	}
+	
+	/**
+	 * Metodo que implementa la adicion de un cliente
+	 */
 
 	public void addCliente() {
 		HashMap<String, String> entrada;
 		String nombre, domicilio, email, nif;
-		boolean isPremium;
+		boolean isPremium = false, valido = true;;
 
-		entrada = this.vista.registerCliente(false);
+		entrada = this.vista.registerCliente();
 		nombre = entrada.get("nombre");
 		domicilio = entrada.get("domicilio");
 		email = entrada.get("email");
 		nif = entrada.get("nif");
 		if (entrada.get("isPremium").equals("S")) {
 			isPremium = true;
-		} else {
+		} else if (entrada.get("isPremium").equals("N")){
 			isPremium = false;
+		} else {
+			valido = false;
+			this.vista.mostrarInfoError("\n***El tipo del cliente no es válido***\n");
 		}
-		try {
-			this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
-			this.vista.mostrarInfo("El cliente ha sido registrado satisfactoriamente.");
-		} catch (Exception e) {
-			this.vista.mostrarInfoError(e.getMessage());
+		if (valido) {
+			try {
+				this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
+				this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");
+			} catch (Exception e) {
+				this.vista.mostrarInfoError(e.getMessage());
+			}			
 		}
 	}
+	
+	/**
+	 * Metodo que implementa la adicion de un pedido
+	 */
 
 	public void addPedido() {
 		HashMap<String, String> entrada;
@@ -105,27 +126,29 @@ public class Controlador {
 
 		try {
 			cantidadInt = Integer.parseInt(cantidad);
-			if (!this.datos.existeElemento(numArticulo, "articulo")) {
-				this.vista.mostrarInfoError("El articulo que desea introducir en el pedido no existe.");
-			} else if (!this.datos.existeElemento(nif, "cliente")) {
-				this.vista.mostrarInfoError("El cliente no existe y debe registrarlo previamente.\n");
+			if (!this.datos.existeElemento(nif, "cliente")) {
+				this.vista.mostrarInfoError("\n***El cliente no existe y debe ser registrado***\n");
 				this.addCliente();
 				cliente = this.datos.getClienteByNif(nif);
 				articulo = this.datos.getArticuloByCodigo(numArticulo);
 				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
-				this.vista.mostrarInfo("El pedido ha sido registrado correctamente.\n");
+				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
 			} else {
 				cliente = this.datos.getClienteByNif(nif);
 				articulo = this.datos.getArticuloByCodigo(numArticulo);
 				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
-				this.vista.mostrarInfo("El pedido ha sido registrado correctamente.\n");
+				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("El formato del campo 'Cantidad' no es valido, revíselo\n");
+			System.out.println("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
 		} catch (Exception e) {
 			this.vista.mostrarInfoError(e.getMessage());
 		}
 	}
+	
+	/**
+	 * Metodo que implementa la adicion de un articulo
+	 */
 
 	private void addArticulo() {
 		HashMap<String, String> entrada;
@@ -144,15 +167,18 @@ public class Controlador {
 			gastosEnvioInt = Double.parseDouble(gastosEnvio);
 			tiempoPrepInt = Integer.parseInt(tiempoPrep);
 			this.datos.addArticulo(codigo, descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
-			this.vista.mostrarInfo("El articulo ha sido registrado correctamente.");
+			this.vista.mostrarInfo("\n--> El articulo ha sido registrado correctamente.");
 		} catch (NumberFormatException e) {
-			this.vista.mostrarInfoError("El formato de los campos no es valido, revíselo\n");
+			this.vista.mostrarInfoError("\n*** El formato de los campos no es valido, revíselo ***\n");
 			e.printStackTrace();
 		} catch (Exception e) {
 			this.vista.mostrarInfoError(e.getMessage());
-			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Metodo que implementa la eliminacion de un pedido
+	 */
 
 	public void deletePedido() {
 		String numPedido;
@@ -161,15 +187,19 @@ public class Controlador {
 		if (this.datos.existeElemento(numPedido, "pedido")) {
 			try {
 				this.datos.deletePedido(numPedido);
-				this.vista.mostrarInfo("El pedido se ha eliminado correctamente.");
+				this.vista.mostrarInfo("--> El pedido se ha eliminado correctamente.");
 			} catch (Exception e) {
 				this.vista.mostrarInfoError(e.getMessage());
 			}
 		} else {
-			this.vista.mostrarInfoError("El pedido introducido no existe.");
+			this.vista.mostrarInfoError("*** El pedido introducido no existe. ***");
 		}
 	}
 
+	/**
+	 * Metodo implementa el muestreo de clientes
+	 */
+	
 	public void mostrarClientes() {
 		ArrayList<Cliente> clientes;
 		ArrayList<String> contenido = new ArrayList<>();
@@ -180,6 +210,10 @@ public class Controlador {
 		}
 		this.vista.mostrarListado(contenido, "cliente");
 	}
+	
+	/**
+	 * Metodo que implementa el muestreo de clientes Estandar
+	 */
 
 	public void mostrarEstandar() {
 		ArrayList<Cliente> clientes;
@@ -193,6 +227,10 @@ public class Controlador {
 		}
 		this.vista.mostrarListado(contenido, "cliente");
 	}
+	
+	/**
+	 * Metodo que implementa el muestreo de clientes Premium
+	 */
 
 	public void mostrarPremium() {
 		ArrayList<Cliente> clientes;
@@ -206,6 +244,9 @@ public class Controlador {
 		}
 		this.vista.mostrarListado(contenido, "cliente");
 	}
+	/**
+	 * Metodo que implementa el muestreo de articulos
+	 */
 	
 	public void mostrarArticulos() {
 		ArrayList<Articulo> articulos;
@@ -217,6 +258,10 @@ public class Controlador {
 		}
 		this.vista.mostrarListado(contenido, "articulo");
 	}
+	
+	/**
+	 * Metodo que implementa el muestreo de pedidos pendientes
+	 */
 
 	public void mostrarPedidosPendientes() {
 		ArrayList<Pedido> pedidos;
@@ -226,15 +271,10 @@ public class Controlador {
 		pedidos = this.datos.getPedidos();
 		try {
 			filtro = this.vista.filtroListadoPedidos();
-			if (filtro.equals("premium")) {
+			if (!filtro.equals("ninguno")) {
+				Cliente cliente = this.datos.getClienteByNif(filtro);
 				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("premium") && !pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
-					}
-				});
-			} else if (filtro.equals("estandar")) {
-				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("estandar") && !pedido.pedidoEnviado()) {
+					if (pedido.getCliente().getNif().equals(cliente.getNif()) && !pedido.pedidoEnviado()) {
 						contenido.add(pedido.toString());
 					}
 				});
@@ -251,6 +291,10 @@ public class Controlador {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Metodo que implementa el muestreo de pedidos enviados
+	 */
 
 	public void mostrarPedidosEnviados() {
 		ArrayList<Pedido> pedidos;
@@ -260,15 +304,10 @@ public class Controlador {
 		pedidos = this.datos.getPedidos();
 		try {
 			filtro = this.vista.filtroListadoPedidos();
-			if (filtro.equals("premium")) {
+			if (!filtro.equals("ninguno")) {
+				Cliente cliente = this.datos.getClienteByNif(filtro);
 				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("premium") && pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
-					}
-				});
-			} else if (filtro.equals("estandar")) {
-				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().tipoCliente().equals("estandar") && pedido.pedidoEnviado()) {
+					if (pedido.getCliente().getNif().equals(cliente.getNif()) && pedido.pedidoEnviado()) {
 						contenido.add(pedido.toString());
 					}
 				});

@@ -1,14 +1,23 @@
 package grupodamers.modelo;
 
 public class ListaClientes extends Lista<Cliente> {
+	
+	/**
+	 * Metodo que añade un cliente a la lista de clientes
+	 */
 
 	public void addElement(Cliente cliente) throws Exception{
 		if (existe(cliente.getNif())) {
-			throw new Exception("Ya existe un cliente registrado con ese NIF.\n");
+			throw new Exception("\n*** Ya existe un cliente registrado con ese NIF. ***\n");
 		} else {
 			this.lista.add(cliente);
 		}
 	}
+	
+	/**
+	 * Metodo que comprrueba si existe un cliente
+	 * @return boolean existe
+	 */
 	
 	public boolean existe(String nif) {
 		boolean existe = false;
@@ -23,16 +32,26 @@ public class ListaClientes extends Lista<Cliente> {
 		return existe;
 	}
 	
-	public Cliente getClienteByNif(String nif) {
+	/**
+	 * Metodo que devuelve un cliente dado un NIF
+	 * @return cliente
+	 */
+	
+	public Cliente getClienteByNif(String nif) throws Exception {
 		Cliente cliente = null;
 		
-		for (Cliente c: this.lista) {
-			if (c.getNif().equals(nif)) {
-				cliente = c;
-				break;
+		if (existe(nif)) {
+			for (Cliente c: this.lista) {
+				if (c.getNif().equals(nif)) {
+					cliente = c;
+					break;
+				}
 			}
+			return cliente;	
+		} else {
+			throw new Exception("\n***El cliente no existe***\n");
 		}
-		return cliente;
+		
 		
 	}
 

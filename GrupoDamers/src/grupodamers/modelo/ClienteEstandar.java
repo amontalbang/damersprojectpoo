@@ -1,5 +1,9 @@
 package grupodamers.modelo;
 
+/**
+ * Metodo que contiene los metodos de la clase cliente Estandar
+ */
+
 public class ClienteEstandar extends Cliente{
 	
 	/**
@@ -34,7 +38,7 @@ public class ClienteEstandar extends Cliente{
 	
 	/**
 	 * Implementación del método calcAnual()
-	 * @return 
+	 * @return float calcAnual
 	 */
 	
 	public float calcAnual() {
@@ -44,7 +48,7 @@ public class ClienteEstandar extends Cliente{
 	
 	/**
 	 * Implementación del método descuentoEnv()
-	 * @return 
+	 * @return float descuentoEnv
 	 */
 
 	public float descuentoEnv() {
@@ -54,13 +58,12 @@ public class ClienteEstandar extends Cliente{
 	
 	/**
 	 * Metodo para mostrar datos de un articulo
-	 * @return 
 	 */ 
 	    
 	public String toString() {
     	return "Los datos del cliente estandar son: [nombre= " + super.getNombre() + 
     			" domicilio= " + super.getDomicilio() + 
     			" nif= " + super.getNif() + 
-    			" email= " + super.getEmail() + "]";
+    			" email= " + super.getEmail() + "]\n";
     }
 }
