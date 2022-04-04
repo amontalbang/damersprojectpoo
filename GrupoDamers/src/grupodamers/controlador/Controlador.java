@@ -140,7 +140,7 @@ public class Controlador {
 				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
+			this.vista.mostrarInfoError("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
 		} catch (Exception e) {
 			this.vista.mostrarInfoError(e.getMessage());
 		}

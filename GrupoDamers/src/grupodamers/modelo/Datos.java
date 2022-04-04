@@ -44,11 +44,9 @@ public class Datos {
 
 		if (isPremium) {
 			ClientePremium cliente = new ClientePremium(nombre, domicilio, nif, email);
-			System.out.println(cliente.toString());
 			this.listaClientes.addElement(cliente);
 		} else {
 			ClienteEstandar cliente = new ClienteEstandar(nombre, domicilio, nif, email);
-			System.out.println(cliente.toString());
 			this.listaClientes.addElement(cliente);
 		}
 	}
