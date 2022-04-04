@@ -70,7 +70,7 @@ public class Controlador {
 		String nombre, domicilio, email, nif;
 		boolean isPremium;
 
-		entrada = this.vista.registerCliente();
+		entrada = this.vista.registerCliente(false);
 		nombre = entrada.get("nombre");
 		domicilio = entrada.get("domicilio");
 		email = entrada.get("email");
