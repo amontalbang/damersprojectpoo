@@ -1,4 +1,4 @@
-package grupodamers.dao;
+package grupodamers.modelo.dao;
 
 import java.sql.*;
 
