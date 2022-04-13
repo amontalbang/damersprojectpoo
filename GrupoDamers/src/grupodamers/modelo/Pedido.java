@@ -46,7 +46,16 @@ public class Pedido {
         this.fecha = fecha;
         this.precioEnvio = this.precioEnvio();
         this.precioTotal = this.precioTotal();
-    }  
+    }
+    
+    public Pedido(Cliente cliente, Articulo articulo, int cantidad, String fecha){
+        this.cliente = cliente;
+        this.articulo = articulo; 
+        this.cantidad = cantidad;
+        this.fecha = fecha;
+        this.precioEnvio = this.precioEnvio();
+        this.precioTotal = this.precioTotal();
+    } 
     
      /**
     * Metodo para obtener el numero de pedido
@@ -136,6 +145,42 @@ public class Pedido {
     
     public void setFecha(String fecha){
         this.fecha = fecha;
+    }
+    
+    /**
+     * Metodo para setear el precio de envio de un pedido
+     * @param precio
+     */
+    
+    public void setPrecioEnvio(Double precio) {
+    	this.precioEnvio = precio;
+    }
+    
+    /**
+     * Metodo para obtener el precio de envio de un pedido
+     * @return precioEnvio
+     */
+    
+    public Double getPrecioEnvio() {
+    	return this.precioEnvio;
+    }
+    
+    /**
+     * Metodo para setear el precio total de un pedido
+     * @param precioTotal
+     */
+    
+    public void setPrecioTotal(Double precioTotal) {
+    	this.precioTotal = precioTotal;
+    }
+    
+    /**
+     * Metodo para obtener el precio total de un pedido
+     * @return precioTotal
+     */
+    
+    public Double getPrecioTotal() {
+    	return this.precioTotal;
     }
     
     /**

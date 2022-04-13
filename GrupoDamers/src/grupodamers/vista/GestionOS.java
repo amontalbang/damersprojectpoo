@@ -121,9 +121,9 @@ public class GestionOS {
 		LocalDateTime date = LocalDateTime.now();
 		DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-		System.out.println("\nIntroduce el numero de pedido: ");
-		entrada = lector.nextLine();
-		pedido.put("numPedido", entrada);
+		// System.out.println("\nIntroduce el numero de pedido: ");
+		// entrada = lector.nextLine();
+		// pedido.put("numPedido", entrada);
 		System.out.println("\nIntroduce el nif del cliente que realiza el pedido: ");
 		entrada = lector.nextLine();
 		pedido.put("nif", entrada);

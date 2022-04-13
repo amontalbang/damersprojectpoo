@@ -80,7 +80,7 @@ public class Controlador {
 	public void addCliente() {
 		HashMap<String, String> entrada;
 		String nombre, domicilio, email, nif;
-		boolean isPremium = false, valido = true;;
+		boolean isPremium = false, valido = true;
 
 		entrada = this.vista.registerCliente();
 		nombre = entrada.get("nombre");
@@ -100,7 +100,8 @@ public class Controlador {
 				this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
 				this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");
 			} catch (Exception e) {
-				this.vista.mostrarInfoError(e.getMessage());
+				// this.vista.mostrarInfoError(e.getMessage());
+				this.vista.mostrarInfoError("\n*** El cliente no ha podido registrarse debido a un fallo de la aplicacion ***\n");
 			}			
 		}
 	}
@@ -111,13 +112,13 @@ public class Controlador {
 
 	public void addPedido() {
 		HashMap<String, String> entrada;
-		String nif, numArticulo, cantidad, fecha, numPedido;
+		String nif, numArticulo, cantidad, fecha;
 		int cantidadInt;
 		Cliente cliente;
 		Articulo articulo;
 
 		entrada = this.vista.registerPedido();
-		numPedido = entrada.get("numPedido");
+		// numPedido = entrada.get("numPedido");
 		nif = entrada.get("nif");
 		numArticulo = entrada.get("numArticulo");
 		cantidad = entrada.get("cantidad");
@@ -131,12 +132,12 @@ public class Controlador {
 				this.addCliente();
 				cliente = this.datos.getClienteByNif(nif);
 				articulo = this.datos.getArticuloByCodigo(numArticulo);
-				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
+				this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
 				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
 			} else {
 				cliente = this.datos.getClienteByNif(nif);
 				articulo = this.datos.getArticuloByCodigo(numArticulo);
-				this.datos.addPedido(numPedido, cliente, articulo, cantidadInt, fecha);
+				this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
 				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
 			}
 		} catch (NumberFormatException e) {
@@ -172,7 +173,7 @@ public class Controlador {
 			this.vista.mostrarInfoError("\n*** El formato de los campos no es valido, revíselo ***\n");
 			e.printStackTrace();
 		} catch (Exception e) {
-			this.vista.mostrarInfoError(e.getMessage());
+			this.vista.mostrarInfoError("\n*** El articulo no ha podido registrarse correctamente por un fallo de conexión con la base de datos***\n");
 		}
 	}
 	
@@ -182,50 +183,63 @@ public class Controlador {
 
 	public void deletePedido() {
 		String numPedido;
-
-		numPedido = this.vista.deletePedido();
-		if (this.datos.existeElemento(numPedido, "pedido")) {
-			try {
+		
+		try {
+			numPedido = this.vista.deletePedido();
+			if (this.datos.existeElemento(numPedido, "pedido")) {
 				this.datos.deletePedido(numPedido);
 				this.vista.mostrarInfo("--> El pedido se ha eliminado correctamente.");
-			} catch (Exception e) {
-				this.vista.mostrarInfoError(e.getMessage());
-			}
-		} else {
-			this.vista.mostrarInfoError("*** El pedido introducido no existe. ***");
+			} else {
+				this.vista.mostrarInfoError("*** El pedido introducido no existe. ***");
+			}		
+		} catch (Exception e) {
+			this.vista.mostrarInfoError("\n*** El pedido no ha podido ser borrado ***\n");
 		}
+
 	}
 
 	/**
 	 * Metodo implementa el muestreo de clientes
+	 * @throws Exception 
 	 */
 	
 	public void mostrarClientes() {
 		ArrayList<Cliente> clientes;
 		ArrayList<String> contenido = new ArrayList<>();
-
-		clientes = this.datos.getClientes();
-		for (Cliente cliente : clientes) {
-			contenido.add(cliente.toString());
+		
+		try {
+			clientes = this.datos.getClientes();
+			for (Cliente cliente : clientes) {
+				contenido.add(cliente.toString());
+			}
+			this.vista.mostrarListado(contenido, "cliente");			
+		} catch (Exception e) {
+			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
-		this.vista.mostrarListado(contenido, "cliente");
+
 	}
 	
 	/**
 	 * Metodo que implementa el muestreo de clientes Estandar
+	 * @throws Exception 
 	 */
 
 	public void mostrarEstandar() {
 		ArrayList<Cliente> clientes;
 		ArrayList<String> contenido = new ArrayList<>();
-
-		clientes = this.datos.getClientes();
-		for (Cliente cliente : clientes) {
-			if (cliente.tipoCliente().equals("estandar")) {
-				contenido.add(cliente.toString());
+		
+		try {
+			clientes = this.datos.getClientes();
+			for (Cliente cliente : clientes) {
+				if (cliente.tipoCliente().equals("estandar")) {
+					contenido.add(cliente.toString());
+				}
 			}
+			this.vista.mostrarListado(contenido, "cliente");			
+		} catch (Exception e) {
+			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
-		this.vista.mostrarListado(contenido, "cliente");
+
 	}
 	
 	/**
@@ -235,14 +249,19 @@ public class Controlador {
 	public void mostrarPremium() {
 		ArrayList<Cliente> clientes;
 		ArrayList<String> contenido = new ArrayList<>();
-
-		clientes = this.datos.getClientes();
-		for (Cliente cliente : clientes) {
-			if (cliente.tipoCliente().equals("premium")) {
-				contenido.add(cliente.toString());
+		
+		try {
+			clientes = this.datos.getClientes();
+			for (Cliente cliente : clientes) {
+				if (cliente.tipoCliente().equals("premium")) {
+					contenido.add(cliente.toString());
+				}
 			}
+			this.vista.mostrarListado(contenido, "cliente");			
+		} catch (Exception e) {
+			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
-		this.vista.mostrarListado(contenido, "cliente");
+
 	}
 	/**
 	 * Metodo que implementa el muestreo de articulos
@@ -251,12 +270,17 @@ public class Controlador {
 	public void mostrarArticulos() {
 		ArrayList<Articulo> articulos;
 		ArrayList<String> contenido = new ArrayList<>();
-
-		articulos = this.datos.getArticulos();
-		for (Articulo articulo: articulos) {
-			contenido.add(articulo.toString());
+		
+		try {
+			articulos = this.datos.getArticulos();
+			for (Articulo articulo: articulos) {
+				contenido.add(articulo.toString());
+			}
+			this.vista.mostrarListado(contenido, "articulo");			
+		} catch (Exception e) {
+			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
-		this.vista.mostrarListado(contenido, "articulo");
+
 	}
 	
 	/**
@@ -268,8 +292,8 @@ public class Controlador {
 		ArrayList<String> contenido = new ArrayList<>();
 		String filtro;
 
-		pedidos = this.datos.getPedidos();
 		try {
+			pedidos = this.datos.getPedidos();
 			filtro = this.vista.filtroListadoPedidos();
 			if (!filtro.equals("ninguno")) {
 				Cliente cliente = this.datos.getClienteByNif(filtro);
@@ -287,7 +311,7 @@ public class Controlador {
 			}
 			this.vista.mostrarListado(contenido, "pedido");
 		} catch (Exception e) {
-			this.vista.mostrarInfoError(e.getMessage());
+			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 			e.printStackTrace();
 		}
 	}
@@ -301,8 +325,8 @@ public class Controlador {
 		ArrayList<String> contenido = new ArrayList<>();
 		String filtro;
 
-		pedidos = this.datos.getPedidos();
 		try {
+			pedidos = this.datos.getPedidos();
 			filtro = this.vista.filtroListadoPedidos();
 			if (!filtro.equals("ninguno")) {
 				Cliente cliente = this.datos.getClienteByNif(filtro);
@@ -320,7 +344,7 @@ public class Controlador {
 			}
 			this.vista.mostrarListado(contenido, "pedido");
 		} catch (Exception e) {
-			this.vista.mostrarInfoError(e.getMessage());
+			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
 	}
 
