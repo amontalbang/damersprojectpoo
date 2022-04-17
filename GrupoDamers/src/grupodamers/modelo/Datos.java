@@ -14,8 +14,6 @@ public class Datos {
 	// ListaArticulos listaArticulos = new ListaArticulos();
 	// ListaClientes listaClientes = new ListaClientes();
 	// ListaPedidos listaPedidos = new ListaPedidos();
-	
-	DAOFactory factory;
 
 	public Datos() {}
 
@@ -26,7 +24,7 @@ public class Datos {
 	public void addArticulo(String codigo, String descripcion, double precioVenta, double gastoEnvio,
 			int tiempoPreparacion) throws Exception {
 		Articulo articulo = new Articulo(codigo, descripcion, precioVenta, gastoEnvio, tiempoPreparacion);
-		DAOArticuloImpl daoArticulo = this.factory.getArticulo();
+		DAOArticuloImpl daoArticulo = DAOFactory.getArticulo();
 		daoArticulo.add(articulo);
 		
 		// this.listaArticulos.addElement(articulo);
@@ -39,7 +37,7 @@ public class Datos {
 	public void addPedido(Cliente cliente, Articulo articulo, int cantidad, String fecha)
 			throws Exception {
 		Pedido pedido = new Pedido(cliente, articulo, cantidad, fecha);
-		DAOPedidoImpl daoPedido = this.factory.getPedido();
+		DAOPedidoImpl daoPedido = DAOFactory.getPedido();
 		daoPedido.add(pedido);
 		
 		// this.listaPedidos.addElement(pedido);
@@ -54,13 +52,13 @@ public class Datos {
 
 		if (isPremium) {
 			ClientePremium cliente = new ClientePremium(nombre, domicilio, nif, email);
-			DAOClientePremiumImpl daoPremium = this.factory.getClientePremium();
+			DAOClientePremiumImpl daoPremium = DAOFactory.getClientePremium();
 			daoPremium.add(cliente);
 			
 			// this.listaClientes.addElement(cliente);
 		} else {
 			ClienteEstandar cliente = new ClienteEstandar(nombre, domicilio, nif, email);
-			DAOClienteEstandarImpl daoEstandar = this.factory.getClienteEstandar();
+			DAOClienteEstandarImpl daoEstandar = DAOFactory.getClienteEstandar();
 			daoEstandar.add(cliente);
 			
 			// this.listaClientes.addElement(cliente);
@@ -73,7 +71,7 @@ public class Datos {
 	 */
 
 	public ArrayList<Articulo> getArticulos() throws Exception {
-		DAOArticuloImpl daoArticulo = this.factory.getArticulo();
+		DAOArticuloImpl daoArticulo = DAOFactory.getArticulo();
 		return daoArticulo.getAll();
 		// return this.listaArticulos.getLista();
 	}
@@ -84,7 +82,7 @@ public class Datos {
 	 */
 
 	public ArrayList<Pedido> getPedidos() throws Exception {
-		DAOPedidoImpl daoPedido = this.factory.getPedido();
+		DAOPedidoImpl daoPedido = DAOFactory.getPedido();
 		return daoPedido.getAll();
 		// return this.listaPedidos.getLista();
 	}
@@ -96,8 +94,8 @@ public class Datos {
 
 	public ArrayList<Cliente> getClientes() throws Exception {
 		ArrayList<Cliente> clientes = new ArrayList<>();
-		DAOClientePremiumImpl daoClientePremium = this.factory.getClientePremium();
-		DAOClienteEstandarImpl daoClienteEstandar = this.factory.getClienteEstandar();
+		DAOClientePremiumImpl daoClientePremium = DAOFactory.getClientePremium();
+		DAOClienteEstandarImpl daoClienteEstandar = DAOFactory.getClienteEstandar();
 		
 		for (Cliente cliente : daoClientePremium.getAll()) {
 			clientes.add(cliente);
@@ -119,27 +117,42 @@ public class Datos {
 		switch (elemento) {
 		case "cliente":
 			// existe = this.listaClientes.existe(identificador);
-			DAOClienteImpl daoCliente = this.factory.getClienteEstandar();
+			DAOClienteImpl daoCliente = DAOFactory.getClienteEstandar();
 			Cliente cliente = daoCliente.get(identificador);
-			if(!cliente.getNif().isEmpty() && cliente.getNif().equalsIgnoreCase(identificador)) {
+			/*if(!cliente.getNif().isEmpty() && cliente.getNif().equalsIgnoreCase(identificador)) {
+				return true;
+			} else {
+				return false;
+			}*/
+			if(cliente != null) {
 				return true;
 			} else {
 				return false;
 			}
 		case "pedido":
 			// existe = this.listaPedidos.existe(identificador);
-			DAOPedidoImpl daoPedido = this.factory.getPedido();
+			DAOPedidoImpl daoPedido = DAOFactory.getPedido();
 			Pedido pedido = daoPedido.get(identificador);
-			if(!pedido.getNumPedido().isEmpty() && pedido.getNumPedido().equalsIgnoreCase(identificador)) {
+			/*if(!pedido.getNumPedido().isEmpty() && pedido.getNumPedido().equalsIgnoreCase(identificador)) {
+				return true;
+			} else {
+				return false;
+			}*/
+			if(pedido != null) {
 				return true;
 			} else {
 				return false;
 			}
 		case "articulo":
 			// existe = this.listaArticulos.existe(identificador);
-			DAOArticuloImpl daoArticulo = this.factory.getArticulo();
+			DAOArticuloImpl daoArticulo = DAOFactory.getArticulo();
 			Articulo articulo = daoArticulo.get(identificador);
-			if(!articulo.getCodigo().isEmpty() && articulo.getCodigo().equalsIgnoreCase(identificador)) {
+			/*if(!articulo.getCodigo().isEmpty() && articulo.getCodigo().equalsIgnoreCase(identificador)) {
+				return true;
+			} else {
+				return false;
+			}*/
+			if(articulo != null) {
 				return true;
 			} else {
 				return false;
@@ -154,7 +167,7 @@ public class Datos {
 	 */
 
 	public void deletePedido(String numPedido) throws Exception {
-		DAOPedidoImpl daoPedido = this.factory.getPedido();
+		DAOPedidoImpl daoPedido = DAOFactory.getPedido();
 		// Pedido pedido = this.listaPedidos.getPedidoByNumPedido(numPedido);
 		Pedido pedido = daoPedido.get(numPedido);
 		daoPedido.delete(pedido);
@@ -168,7 +181,7 @@ public class Datos {
 	 */
 
 	public Cliente getClienteByNif(String nif) throws Exception {
-		DAOClienteImpl daoCliente = this.factory.getClienteEstandar();
+		DAOClienteImpl daoCliente = DAOFactory.getClienteEstandar();
 		Cliente cliente = daoCliente.get(nif);
 		return cliente;
 	}
@@ -179,7 +192,7 @@ public class Datos {
 	 */
 
 	public Articulo getArticuloByCodigo(String codigo) throws Exception {
-		DAOArticuloImpl daoArticulo = this.factory.getArticulo();
+		DAOArticuloImpl daoArticulo = DAOFactory.getArticulo();
 		return daoArticulo.get(codigo);
 
 		// return this.listaArticulos.getArticuloByCodigo(codigo);
@@ -191,7 +204,7 @@ public class Datos {
 	 */
 
 	public Pedido getPedidoByNumPedido(String numPedido) throws Exception {
-		DAOPedidoImpl daoPedido = this.factory.getPedido();
+		DAOPedidoImpl daoPedido = DAOFactory.getPedido();
 		return daoPedido.get(numPedido);
 		
 		// return this.listaPedidos.getPedidoByNumPedido(numPedido);

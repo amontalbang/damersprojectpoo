@@ -4,19 +4,19 @@ import grupodamers.modelo.dao.*;
 
 public class DAOFactory {
 	
-	public DAOClientePremiumImpl getClientePremium() {
+	public static DAOClientePremiumImpl getClientePremium() {
 		return new DAOClientePremiumImpl();
 	}
 	
-	public DAOClienteEstandarImpl getClienteEstandar() {
+	public static DAOClienteEstandarImpl getClienteEstandar() {
 		return new DAOClienteEstandarImpl();
 	}
 	
-	public DAOArticuloImpl getArticulo() {
+	public static DAOArticuloImpl getArticulo() {
 		return new DAOArticuloImpl();
 	}
 	
-	public DAOPedidoImpl getPedido() {
+	public static DAOPedidoImpl getPedido() {
 		return new DAOPedidoImpl();
 	}
 

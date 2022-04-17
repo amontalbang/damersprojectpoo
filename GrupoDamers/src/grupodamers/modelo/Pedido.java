@@ -44,8 +44,6 @@ public class Pedido {
         this.articulo = articulo; 
         this.cantidad = cantidad;
         this.fecha = fecha;
-        this.precioEnvio = this.precioEnvio();
-        this.precioTotal = this.precioTotal();
     }
     
     public Pedido(Cliente cliente, Articulo articulo, int cantidad, String fecha){
@@ -53,8 +51,6 @@ public class Pedido {
         this.articulo = articulo; 
         this.cantidad = cantidad;
         this.fecha = fecha;
-        this.precioEnvio = this.precioEnvio();
-        this.precioTotal = this.precioTotal();
     } 
     
      /**

@@ -6,7 +6,6 @@ public interface DAO<T> {
 	
 	void add(T t) throws Exception;
 	void delete(T t) throws Exception;
-	void update(T t) throws Exception;
 	T get(String id) throws Exception;
 	int getTotalCount() throws Exception;
 	ArrayList<T> getAll() throws Exception;

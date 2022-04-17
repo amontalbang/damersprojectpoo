@@ -97,8 +97,12 @@ public class Controlador {
 		}
 		if (valido) {
 			try {
-				this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
-				this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");
+				if (this.datos.existeElemento(nif, "cliente")) {
+					this.vista.mostrarInfoError("\n*** El cliente ya existe en la base de datos ***\n");
+				} else {
+					this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
+					this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");					
+				}
 			} catch (Exception e) {
 				// this.vista.mostrarInfoError(e.getMessage());
 				this.vista.mostrarInfoError("\n*** El cliente no ha podido registrarse debido a un fallo de la aplicacion ***\n");
@@ -127,23 +131,28 @@ public class Controlador {
 
 		try {
 			cantidadInt = Integer.parseInt(cantidad);
-			if (!this.datos.existeElemento(nif, "cliente")) {
-				this.vista.mostrarInfoError("\n***El cliente no existe y debe ser registrado***\n");
-				this.addCliente();
-				cliente = this.datos.getClienteByNif(nif);
-				articulo = this.datos.getArticuloByCodigo(numArticulo);
-				this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
-				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
+			if(this.datos.existeElemento(numArticulo, "articulo")) {
+				if (!this.datos.existeElemento(nif, "cliente")) {
+					this.vista.mostrarInfoError("\n***El cliente no existe y debe ser registrado***\n");
+					this.addCliente();
+					cliente = this.datos.getClienteByNif(nif);
+					articulo = this.datos.getArticuloByCodigo(numArticulo);
+					this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
+					this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
+				} else {
+					cliente = this.datos.getClienteByNif(nif);
+					articulo = this.datos.getArticuloByCodigo(numArticulo);
+					this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
+					this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
+				}				
 			} else {
-				cliente = this.datos.getClienteByNif(nif);
-				articulo = this.datos.getArticuloByCodigo(numArticulo);
-				this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
-				this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
+				this.vista.mostrarInfoError("\n*** El articulo no existe ***\n");
 			}
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
+			System.out.println(e.getMessage());
 		} catch (Exception e) {
-			this.vista.mostrarInfoError(e.getMessage());
+			this.vista.mostrarInfoError("\n*** El pedido no ha podido registrarse en la base de datos ***\n");
 		}
 	}
 	
@@ -167,13 +176,18 @@ public class Controlador {
 			precioVentaInt = Double.parseDouble(precioVenta);
 			gastosEnvioInt = Double.parseDouble(gastosEnvio);
 			tiempoPrepInt = Integer.parseInt(tiempoPrep);
-			this.datos.addArticulo(codigo, descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
-			this.vista.mostrarInfo("\n--> El articulo ha sido registrado correctamente.");
+			if(!this.datos.existeElemento(codigo, "articulo")) {
+				this.datos.addArticulo(codigo, descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
+				this.vista.mostrarInfo("\n--> El articulo ha sido registrado correctamente.");				
+			} else {
+				this.vista.mostrarInfoError("\n*** El articulo que desea registrar ya existe en la base de datos ***\n");
+			}
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("\n*** El formato de los campos no es valido, revíselo ***\n");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El articulo no ha podido registrarse correctamente por un fallo de conexión con la base de datos***\n");
+			this.vista.mostrarInfoError("\n*** El articulo no ha podido registrarse correctamente en la base de datos***\n");
 		}
 	}
 	
@@ -212,7 +226,11 @@ public class Controlador {
 			for (Cliente cliente : clientes) {
 				contenido.add(cliente.toString());
 			}
-			this.vista.mostrarListado(contenido, "cliente");			
+			if(contenido.isEmpty()) {
+				this.vista.mostrarInfo("\n*** No hay clientes para mostrar ***\n");
+			} else {
+				this.vista.mostrarListado(contenido, "cliente");							
+			}
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
@@ -235,7 +253,11 @@ public class Controlador {
 					contenido.add(cliente.toString());
 				}
 			}
-			this.vista.mostrarListado(contenido, "cliente");			
+			if(contenido.isEmpty()) {
+				this.vista.mostrarInfo("\n*** No hay clientes estándar para mostrar ***\n");
+			} else {
+				this.vista.mostrarListado(contenido, "cliente");							
+			}
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
@@ -257,7 +279,11 @@ public class Controlador {
 					contenido.add(cliente.toString());
 				}
 			}
-			this.vista.mostrarListado(contenido, "cliente");			
+			if(contenido.isEmpty()) {
+				this.vista.mostrarInfo("\n*** No hay clientes premium para mostrar ***\n");
+			} else {
+				this.vista.mostrarListado(contenido, "cliente");							
+			}
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
@@ -273,10 +299,14 @@ public class Controlador {
 		
 		try {
 			articulos = this.datos.getArticulos();
-			for (Articulo articulo: articulos) {
-				contenido.add(articulo.toString());
+			if(articulos.isEmpty()) {
+				this.vista.mostrarInfo("\n*** No hay articulos para mostrar ***\n");
+			} else {
+				for (Articulo articulo: articulos) {
+					contenido.add(articulo.toString());
+				}
+				this.vista.mostrarListado(contenido, "articulo");							
 			}
-			this.vista.mostrarListado(contenido, "articulo");			
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
 		}
@@ -309,10 +339,13 @@ public class Controlador {
 					}
 				});
 			}
-			this.vista.mostrarListado(contenido, "pedido");
+			if(contenido.isEmpty()) {
+				this.vista.mostrarInfo("\n*** No hay pedidos para mostrar ***\n");
+			} else {
+				this.vista.mostrarListado(contenido, "pedido");				
+			}
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
-			e.printStackTrace();
 		}
 	}
 	

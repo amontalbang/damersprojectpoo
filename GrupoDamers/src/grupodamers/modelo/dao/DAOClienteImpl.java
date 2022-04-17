@@ -1,6 +1,6 @@
 package grupodamers.modelo.dao;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import grupodamers.modelo.Cliente;
@@ -21,29 +21,31 @@ public abstract class DAOClienteImpl extends Conexion implements DAO<Cliente>{
 	public abstract void delete(Cliente t) throws Exception;
 
 	@Override
-	public abstract void update(Cliente t) throws Exception;
-
-	@Override
 	public Cliente get(String id) throws Exception {
 		try {
 			this.conectar();
-			PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM cliente WHERE Codigo_cliente = ?");
+			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM cliente WHERE NIF = ?");
+			CallableStatement st = this.conexion.prepareCall("{ call get_cliente(?) }");
 			st.setString(1, id);
 			ResultSet rs = st.executeQuery();
-			if (rs.getString(5).equals("1")) {
-				ClientePremium cliente = new ClientePremium();
-				cliente.setEmail(rs.getString(1));
-				cliente.setNombre(rs.getString(2));
-				cliente.setDomicilio(rs.getString(3));
-				cliente.setNif(rs.getString(4));
-				return cliente;
+			if(rs.next()) {
+				if (rs.getString(5).equals("1")) {
+					ClientePremium cliente = new ClientePremium();
+					cliente.setEmail(rs.getString(1));
+					cliente.setNombre(rs.getString(2));
+					cliente.setDomicilio(rs.getString(3));
+					cliente.setNif(rs.getString(4));
+					return cliente;
+				} else {
+					ClienteEstandar cliente = new ClienteEstandar();
+					cliente.setEmail(rs.getString(1));
+					cliente.setNombre(rs.getString(2));
+					cliente.setDomicilio(rs.getString(3));
+					cliente.setNif(rs.getString(4));
+					return cliente;
+				}				
 			} else {
-				ClienteEstandar cliente = new ClienteEstandar();
-				cliente.setEmail(rs.getString(1));
-				cliente.setNombre(rs.getString(2));
-				cliente.setDomicilio(rs.getString(3));
-				cliente.setNif(rs.getString(4));
-				return cliente;
+				return null;				
 			}
 		} catch (Exception e) {
 			throw e;
