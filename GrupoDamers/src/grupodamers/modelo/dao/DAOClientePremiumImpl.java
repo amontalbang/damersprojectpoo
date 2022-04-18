@@ -1,7 +1,6 @@
 package grupodamers.modelo.dao;
 
 import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
@@ -11,14 +10,12 @@ import grupodamers.modelo.ClientePremium;
 public class DAOClientePremiumImpl extends DAOClienteImpl {
 
 	public DAOClientePremiumImpl() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public int getTotalCount() throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT COUNT(Email) FROM cliente WHERE isPremium = 1");
 			CallableStatement st = this.conexion.prepareCall("{ call total_count_cliente() }");
 			ResultSet rs = st.executeQuery();
 			return rs.getInt(1);
@@ -34,7 +31,6 @@ public class DAOClientePremiumImpl extends DAOClienteImpl {
 		ArrayList<Cliente> registros = new ArrayList<>();
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM cliente WHERE isPremium = 1");
 			CallableStatement st = this.conexion.prepareCall("{ call show_clientes() }");
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
@@ -57,7 +53,6 @@ public class DAOClientePremiumImpl extends DAOClienteImpl {
 	public void add(Cliente t) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("INSERT INTO cliente (Email, Nombre, Domicilio, NIF, isPremium) VALUES (?, ?, ?, ?, 1)");
 			CallableStatement st = this.conexion.prepareCall("{ call add_cliente(?,?,?,?,?) }");
 			st.setString(1, t.getEmail());
 			st.setString(2, t.getNombre());
@@ -75,7 +70,6 @@ public class DAOClientePremiumImpl extends DAOClienteImpl {
 	public void delete(Cliente t) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("DELETE * FROM cliente WHERE NIF = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call delete_cliente(?) }");
 			st.setString(1, t.getNif());
 			st.executeUpdate();

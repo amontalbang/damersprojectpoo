@@ -10,14 +10,12 @@ import grupodamers.modelo.interfaces.DAO;
 public class DAOArticuloImpl extends Conexion implements DAO<Articulo>{
 
 	public DAOArticuloImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public int getTotalCount() throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT COUNT(Codigo_Articulo) FROM articulo");
 			CallableStatement st = this.conexion.prepareCall("{ call total_count_articulo() }");
 			ResultSet rs = st.executeQuery();
 			return rs.getInt(1);
@@ -33,7 +31,6 @@ public class DAOArticuloImpl extends Conexion implements DAO<Articulo>{
 		ArrayList<Articulo> registros = new ArrayList<>();
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM articulo");
 			CallableStatement st = this.conexion.prepareCall("{call show_articulos()}");
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
@@ -57,7 +54,6 @@ public class DAOArticuloImpl extends Conexion implements DAO<Articulo>{
 	public void add(Articulo t) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("INSERT INTO articulo(Codigo_Articulo, Descripcion, PVP, Gastos_Envio, Tiempo_Preparacion) VALUES (?, ?, ?, ?, ?)");
 			CallableStatement st = this.conexion.prepareCall("{ call add_articulo(?,?,?,?,?) }");
 			st.setString(1, t.getCodigo());
 			st.setString(2, t.getDescripcion());
@@ -76,7 +72,6 @@ public class DAOArticuloImpl extends Conexion implements DAO<Articulo>{
 	public void delete(Articulo t) throws Exception {
 		try {
 			this.conectar();
-			//PreparedStatement st = this.conexion.prepareStatement("DELETE * FROM articulo WHERE Codigo_Articulo = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call delete_articulo(?) }");
 			st.setString(1, t.getCodigo());
 			st.executeUpdate();
@@ -92,7 +87,6 @@ public class DAOArticuloImpl extends Conexion implements DAO<Articulo>{
 		Articulo articulo = new Articulo();
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM articulo WHERE Codigo_Articulo = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call get_articulo(?) }");
 			st.setString(1, id);
 			ResultSet rs = st.executeQuery();

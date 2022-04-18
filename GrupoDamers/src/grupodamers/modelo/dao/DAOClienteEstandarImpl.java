@@ -10,14 +10,12 @@ import grupodamers.modelo.ClienteEstandar;
 public class DAOClienteEstandarImpl extends DAOClienteImpl {
 
 	public DAOClienteEstandarImpl() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public int getTotalCount() throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT COUNT(Email) FROM cliente WHERE isPremium = 0");
 			CallableStatement st = this.conexion.prepareCall("{ call total_count_cliente() }");
 			ResultSet rs = st.executeQuery();
 			return rs.getInt(1);
@@ -33,7 +31,6 @@ public class DAOClienteEstandarImpl extends DAOClienteImpl {
 		ArrayList<Cliente> registros = new ArrayList<>();
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM cliente WHERE isPremium = 0");
 			CallableStatement st = this.conexion.prepareCall("{ call show_clientes() }");
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
@@ -56,7 +53,6 @@ public class DAOClienteEstandarImpl extends DAOClienteImpl {
 	public void add(Cliente t) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("INSERT INTO cliente (Email, Nombre, Domicilio, NIF, isPremium) VALUES (?, ?, ?, ?, 0)");
 			CallableStatement st = this.conexion.prepareCall("{ call add_cliente(?,?,?,?,?) }");
 			st.setString(1, t.getEmail());
 			st.setString(2, t.getNombre());
@@ -74,7 +70,6 @@ public class DAOClienteEstandarImpl extends DAOClienteImpl {
 	public void delete(Cliente t) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("DELETE * FROM cliente WHERE NIF = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call delete_cliente(?) }");
 			st.setString(1, t.getNif());
 			st.executeUpdate();

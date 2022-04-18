@@ -11,7 +11,6 @@ import grupodamers.modelo.interfaces.DAO;
 public abstract class DAOClienteImpl extends Conexion implements DAO<Cliente>{
 
 	public DAOClienteImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -24,7 +23,6 @@ public abstract class DAOClienteImpl extends Conexion implements DAO<Cliente>{
 	public Cliente get(String id) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM cliente WHERE NIF = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call get_cliente(?) }");
 			st.setString(1, id);
 			ResultSet rs = st.executeQuery();

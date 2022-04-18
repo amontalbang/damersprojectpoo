@@ -12,14 +12,12 @@ import grupodamers.modelo.interfaces.DAO;
 public class DAOPedidoImpl extends Conexion implements DAO<Pedido>{
 
 	public DAOPedidoImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public int getTotalCount() throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT COUNT(Num_Pedido) FROM pedido");
 			CallableStatement st = this.conexion.prepareCall("{call get_count_pedido()}");
 			ResultSet rs = st.executeQuery();
 			return rs.getInt(1);
@@ -37,7 +35,6 @@ public class DAOPedidoImpl extends Conexion implements DAO<Pedido>{
 		DAOArticuloImpl daoArticulo = DAOFactory.getArticulo();
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM pedido");
 			CallableStatement st = this.conexion.prepareCall("{ call show_pedidos() }");
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
@@ -65,7 +62,6 @@ public class DAOPedidoImpl extends Conexion implements DAO<Pedido>{
 	public void add(Pedido t) throws Exception {
 		try {
 			this.conectar();
-			// PreparedStatement st = this.conexion.prepareStatement("INSERT INTO pedido (Cliente, Codigo_Articulo, Cantidad, Fecha_Hora, Precio_Envio, Precio_Total) VALUES (?, ?, ?, ?, ?, ?)");
 			CallableStatement st = this.conexion.prepareCall("{ call add_pedido(?,?,?,?,?,?) }");
 			st.setString(1, t.getCliente().getNif());
 			st.setString(2,  t.getArticulo().getCodigo());
@@ -85,7 +81,6 @@ public class DAOPedidoImpl extends Conexion implements DAO<Pedido>{
 	public void delete(Pedido t) throws Exception {
 		try {
 			this.conectar();
-			//PreparedStatement st = this.conexion.prepareStatement("DELETE FROM pedido WHERE Num_Pedido = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call delete_pedido(?) }");
 			st.setString(1, t.getNumPedido());
 			st.executeUpdate();
@@ -103,7 +98,6 @@ public class DAOPedidoImpl extends Conexion implements DAO<Pedido>{
 		DAOArticuloImpl daoArticulo = new DAOArticuloImpl();
 		try {
 			this.conectar();
-			//PreparedStatement st = this.conexion.prepareStatement("SELECT * FROM pedido WHERE Num_Pedido = ?");
 			CallableStatement st = this.conexion.prepareCall("{ call get_pedido(?) }");
 			st.setString(1, id);
 			ResultSet rs = st.executeQuery();

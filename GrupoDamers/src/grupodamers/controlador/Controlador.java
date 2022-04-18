@@ -150,7 +150,6 @@ public class Controlador {
 			}
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
-			System.out.println(e.getMessage());
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El pedido no ha podido registrarse en la base de datos ***\n");
 		}
@@ -184,7 +183,6 @@ public class Controlador {
 			}
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("\n*** El formato de los campos no es valido, revíselo ***\n");
-			System.out.println(e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El articulo no ha podido registrarse correctamente en la base de datos***\n");
