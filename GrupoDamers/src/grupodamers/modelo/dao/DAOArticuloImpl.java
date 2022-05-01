@@ -1,8 +1,10 @@
 package grupodamers.modelo.dao;
 
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import grupodamers.modelo.Articulo;
 import grupodamers.modelo.interfaces.DAO;
@@ -13,97 +15,66 @@ public class DAOArticuloImpl extends Conexion implements DAO<Articulo>{
 	}
 
 	@Override
-	public int getTotalCount() throws Exception {
-		try {
-			this.conectar();
-			CallableStatement st = this.conexion.prepareCall("{ call total_count_articulo() }");
-			ResultSet rs = st.executeQuery();
-			return rs.getInt(1);
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			this.desconectar();
-		}
-	}
-
-	@Override
 	public ArrayList<Articulo> getAll() throws Exception {
-		ArrayList<Articulo> registros = new ArrayList<>();
 		try {
-			this.conectar();
-			CallableStatement st = this.conexion.prepareCall("{call show_articulos()}");
-			ResultSet rs = st.executeQuery();
-			while(rs.next()) {
-				Articulo articulo = new Articulo();
-				articulo.setCodigo(rs.getString(1));
-				articulo.setDescripcion(rs.getString(2));
-				articulo.setPrecioVenta(rs.getDouble(3));
-				articulo.setGastosEnvio(rs.getDouble(4));
-				articulo.setTiempoPrep(rs.getInt(5));
-				registros.add(articulo);
-			}
-			return registros;
+			Session session = UtilHibernate.getSession();
+			session.beginTransaction();
+			@SuppressWarnings("unchecked")
+			ArrayList<Articulo> list = (ArrayList<Articulo>) session.createQuery("from Articulo").list();
+			session.getTransaction().commit();
+			return list;
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			this.desconectar();
 		}
 	}
 
 	@Override
 	public void add(Articulo t) throws Exception {
 		try {
-			this.conectar();
-			CallableStatement st = this.conexion.prepareCall("{ call add_articulo(?,?,?,?,?) }");
-			st.setString(1, t.getCodigo());
-			st.setString(2, t.getDescripcion());
-			st.setDouble(3, t.getPrecioVenta());
-			st.setDouble(4, t.getGastosEnvio());
-			st.setInt(5, t.getTiempoPrep());
-			st.executeUpdate();
+			Session session = UtilHibernate.getSession();
+			session.beginTransaction();
+			session.save(t);
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			this.desconectar();
 		}
 	}
 
 	@Override
 	public void delete(Articulo t) throws Exception {
 		try {
-			this.conectar();
-			CallableStatement st = this.conexion.prepareCall("{ call delete_articulo(?) }");
-			st.setString(1, t.getCodigo());
-			st.executeUpdate();
+			Session session = UtilHibernate.getSession();
+			session.beginTransaction();
+			session.delete(t);
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			this.desconectar();
 		}	
 	}
 
 	@Override
 	public Articulo get(String id) throws Exception {
-		Articulo articulo = new Articulo();
 		try {
-			this.conectar();
-			CallableStatement st = this.conexion.prepareCall("{ call get_articulo(?) }");
-			st.setString(1, id);
-			ResultSet rs = st.executeQuery();
-			if(rs.next()) {
-				articulo.setCodigo(rs.getString(1));
-				articulo.setDescripcion(rs.getString(2));
-				articulo.setPrecioVenta(rs.getDouble(3));
-				articulo.setGastosEnvio(rs.getDouble(4));
-				articulo.setTiempoPrep(rs.getInt(5));
-				return articulo;				
+			Session session = UtilHibernate.getSession();
+			session.beginTransaction();
+			@SuppressWarnings("unchecked")
+			Query<Object[]> consulta = session.createSQLQuery("select * from articulo where Codigo_Articulo =:id");
+			consulta.setParameter("id", id);
+			Object[] object = consulta.uniqueResult();
+			session.getTransaction().commit();
+			if (object != null) {
+				Articulo articulo = new Articulo();
+				articulo.setCodigo(object[0].toString());
+				articulo.setDescripcion(object[1].toString());
+				articulo.setGastosEnvio(((BigDecimal) object[2]).doubleValue());
+				articulo.setPrecioVenta(((BigDecimal) object[3]).doubleValue());
+				articulo.setTiempoPrep((int) object[4]);
+				return articulo;
 			} else {
 				return null;
 			}
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			this.desconectar();
 		}
 	}
 

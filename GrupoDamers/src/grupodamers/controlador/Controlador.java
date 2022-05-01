@@ -67,6 +67,7 @@ public class Controlador {
 				this.vista.mostrarInfo("\n***Gracias por utilizar nuestra aplicación.***\n");
 				break;
 			default:
+				this.datos.closeSession();
 				this.vista.mostrarInfoError("\n*** La opcion introducida no coincide con ninguna de las disponibles ***");
 				break;
 			}
@@ -93,18 +94,17 @@ public class Controlador {
 			isPremium = false;
 		} else {
 			valido = false;
-			this.vista.mostrarInfoError("\n***El tipo del cliente no es válido***\n");
+			this.vista.mostrarInfoError("\n***El tipo del cliente no es válido. Por defecto, estándar.***\n");
 		}
 		if (valido) {
 			try {
-				if (this.datos.existeElemento(nif, "cliente")) {
+				if (this.datos.existeElemento(nif, "cliente") || this.datos.existeElemento(email, "cliente")) {
 					this.vista.mostrarInfoError("\n*** El cliente ya existe en la base de datos ***\n");
 				} else {
 					this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
 					this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");					
 				}
 			} catch (Exception e) {
-				// this.vista.mostrarInfoError(e.getMessage());
 				this.vista.mostrarInfoError("\n*** El cliente no ha podido registrarse debido a un fallo de la aplicacion ***\n");
 			}			
 		}
@@ -122,7 +122,6 @@ public class Controlador {
 		Articulo articulo;
 
 		entrada = this.vista.registerPedido();
-		// numPedido = entrada.get("numPedido");
 		nif = entrada.get("nif");
 		numArticulo = entrada.get("numArticulo");
 		cantidad = entrada.get("cantidad");
@@ -151,6 +150,7 @@ public class Controlador {
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
 		} catch (Exception e) {
+			e.printStackTrace();
 			this.vista.mostrarInfoError("\n*** El pedido no ha podido registrarse en la base de datos ***\n");
 		}
 	}
@@ -183,7 +183,6 @@ public class Controlador {
 			}
 		} catch (NumberFormatException e) {
 			this.vista.mostrarInfoError("\n*** El formato de los campos no es valido, revíselo ***\n");
-			e.printStackTrace();
 		} catch (Exception e) {
 			this.vista.mostrarInfoError("\n*** El articulo no ha podido registrarse correctamente en la base de datos***\n");
 		}

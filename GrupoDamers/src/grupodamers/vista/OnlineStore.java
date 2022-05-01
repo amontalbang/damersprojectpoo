@@ -5,6 +5,9 @@
  */
 package grupodamers.vista;
 
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 import grupodamers.controlador.Controlador;
 import grupodamers.modelo.Datos;
 
@@ -24,8 +27,15 @@ public class OnlineStore {
     	Datos modelo = new Datos();
     	Controlador controlador = new Controlador(modelo, vista);
     	
+    	OnlineStore.quitarLogs();
     	controlador.gestionMenu();
     	
+    }
+    
+    private static void quitarLogs() {
+    	LogManager.getLogManager().reset();
+    	Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+    	globalLogger.setLevel(java.util.logging.Level.OFF);
     }
     
 }

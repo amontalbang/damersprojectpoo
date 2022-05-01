@@ -170,5 +170,13 @@ public class Datos {
 		DAOPedidoImpl daoPedido = DAOFactory.getPedido();
 		return daoPedido.get(numPedido);
 	}
+	
+	/**
+	 * Metodo que cierra la sesion
+	 */
+	
+	public void closeSession() {
+		UtilHibernate.closeSession();
+	}
 
 }

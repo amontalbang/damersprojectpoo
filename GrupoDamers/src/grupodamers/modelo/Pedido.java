@@ -41,16 +41,20 @@ public class Pedido {
     public Pedido(String numPedido, Cliente cliente, Articulo articulo, int cantidad, String fecha){
         this.numPedido = numPedido;
         this.cliente = cliente;
-        this.articulo = articulo; 
+        this.articulo = articulo;
         this.cantidad = cantidad;
         this.fecha = fecha;
+        this.precioEnvio = this.precioEnvio();
+        this.precioTotal = this.precioTotal();
     }
     
     public Pedido(Cliente cliente, Articulo articulo, int cantidad, String fecha){
         this.cliente = cliente;
-        this.articulo = articulo; 
+        this.articulo = articulo;
         this.cantidad = cantidad;
         this.fecha = fecha;
+        this.precioEnvio = this.precioEnvio();
+        this.precioTotal = this.precioTotal();
     } 
     
      /**
@@ -181,7 +185,7 @@ public class Pedido {
     
     /**
     * Metodo para mostrar datos de un pedido
-    */ 
+    */
     
     public String toString() {
     	if(this.pedidoEnviado()) {
