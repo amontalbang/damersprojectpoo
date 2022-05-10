@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+		"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+		"https://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="grupodamers.modelo">
+	<class name="Cliente" table="cliente">
+		<id name="email" column="Email"/>
+		<discriminator column="isPremium"/>
+		<property name="nombre" column="Nombre"/>
+		<property name="domicilio" column="Domicilio"/>
+		<property name="nif" column="NIF"/>
+		<subclass name="ClientePremium" discriminator-value="1"/>
+		<subclass name="ClienteEstandar" discriminator-value="0"/>
+	</class>
+</hibernate-mapping>
