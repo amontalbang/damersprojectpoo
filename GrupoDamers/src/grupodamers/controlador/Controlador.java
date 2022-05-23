@@ -1,10 +1,21 @@
 package grupodamers.controlador;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import grupodamers.modelo.*;
 import grupodamers.vista.GestionOS;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 /**
  * Metodo que contiene los metodos de la clase Controlador
@@ -12,9 +23,9 @@ import grupodamers.vista.GestionOS;
 
 public class Controlador {
 
-	Datos datos;
-	GestionOS vista;
-
+	private Datos datos;
+	private GestionOS vista;
+	
 	public Controlador(Datos datos, GestionOS vista) {
 		this.datos = datos;
 		this.vista = vista;
@@ -25,89 +36,99 @@ public class Controlador {
 	 */
 
 	public void gestionMenu() {
-		String opt = "0";
+		AnchorPane root = this.vista.showMenu();
+		root.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				Button buttonSelected = (Button) event.getTarget();
+				String selection = buttonSelected.getText();
+				switch (selection) {
+				case "Registrar articulo":
+					addArticulo();				
+					break;
+				case "Mostrar articulos":
+					mostrarArticulos();
+					break;
+				case "Registrar cliente":
+					addCliente(false);
+					break;
+				case "Mostrar clientes":
+					mostrarClientes();				
+					break;
+				case "Mostrar clientes estándar":
+					mostrarEstandar();
+					break;
+				case "Mostrar clientes premium":
+					mostrarPremium();
+					break;
+				case "Registrar pedido":
+					addPedido();
+					break;
+				case "Eliminar pedido":
+					deletePedido();
+					break;
+				case "Mostrar pedidos pendientes":
+					mostrarPedidosPendientes();
+					break;
+				case "Mostrar pedidos enviados":
+					mostrarPedidosEnviados();
+					break;
+				case "Salir":
+					messageController("exit", "Gracias por utilizar nuestra aplicación.");
+					closeApp();
+					break;
+				default:
+					messageController("error", "La opcion introducida no coincide con ninguna de las disponibles");
+					break;
+				}
 
-		while (!opt.equals("11")) {
-			opt = this.vista.gestionMenu();
-			switch (opt) {
-			case "0":
-				this.gestionMenu();
-				break;
-			case "1":
-				this.addArticulo();				
-				break;
-			case "2":
-				this.mostrarArticulos();
-				break;
-			case "3":
-				this.addCliente();
-				break;
-			case "4":
-				this.mostrarClientes();				
-				break;
-			case "5":
-				this.mostrarEstandar();
-				break;
-			case "6":
-				this.mostrarPremium();
-				break;
-			case "7":
-				this.addPedido();
-				break;
-			case "8":
-				this.deletePedido();
-				break;
-			case "9":
-				this.mostrarPedidosPendientes();
-				break;
-			case "10":
-				this.mostrarPedidosEnviados();
-				break;
-			case "11":
-				this.vista.mostrarInfo("\n***Gracias por utilizar nuestra aplicación.***\n");
-				break;
-			default:
-				this.datos.closeSession();
-				this.vista.mostrarInfoError("\n*** La opcion introducida no coincide con ninguna de las disponibles ***");
-				break;
 			}
-		}
+		});		
 	}
 	
 	/**
 	 * Metodo que implementa la adicion de un cliente
 	 */
 
-	public void addCliente() {
-		HashMap<String, String> entrada;
-		String nombre, domicilio, email, nif;
-		boolean isPremium = false, valido = true;
+	public void addCliente(boolean fromPedido) {
+		Pane root = this.vista.registerCliente();
+		TextField campoNombre = (TextField) root.getChildren().get(5);
+		TextField campoDomicilio = (TextField) root.getChildren().get(6);
+		TextField campoNif = (TextField) root.getChildren().get(7);
+		TextField campoEmail = (TextField) root.getChildren().get(8);
+		CheckBox premium = (CheckBox) root.getChildren().get(9);
+		Button button = (Button) root.getChildren().get(10);
+		button.setOnAction(new EventHandler<ActionEvent>() {
 
-		entrada = this.vista.registerCliente();
-		nombre = entrada.get("nombre");
-		domicilio = entrada.get("domicilio");
-		email = entrada.get("email");
-		nif = entrada.get("nif");
-		if (entrada.get("isPremium").equals("S")) {
-			isPremium = true;
-		} else if (entrada.get("isPremium").equals("N")){
-			isPremium = false;
-		} else {
-			valido = false;
-			this.vista.mostrarInfoError("\n***El tipo del cliente no es válido. Por defecto, estándar.***\n");
-		}
-		if (valido) {
-			try {
-				if (this.datos.existeElemento(nif, "cliente") || this.datos.existeElemento(email, "cliente")) {
-					this.vista.mostrarInfoError("\n*** El cliente ya existe en la base de datos ***\n");
-				} else {
-					this.datos.addCliente(nombre, domicilio, nif, email, isPremium);
-					this.vista.mostrarInfo("\n--> El cliente ha sido registrado satisfactoriamente.");					
+			@Override
+			public void handle(ActionEvent event) {
+				String nombre, domicilio, email, nif;
+				boolean isPremium = false;
+				nombre = campoNombre.getText();
+				domicilio = campoDomicilio.getText();
+				email = campoEmail.getText();
+				nif = campoNif.getText();
+				if(premium.isSelected()) {
+					isPremium = true;
 				}
-			} catch (Exception e) {
-				this.vista.mostrarInfoError("\n*** El cliente no ha podido registrarse debido a un fallo de la aplicacion ***\n");
-			}			
-		}
+				try {
+					if (datos.existeElemento(nif, "cliente") || datos.existeElemento(email, "cliente")) {
+						messageController("error", "El cliente ya existe en la base de datos.");
+					} else {
+						datos.addCliente(nombre, domicilio, nif, email, isPremium);
+						messageController("info", "El cliente ha sido registrado satisfactoriamente.");					
+					}
+				} catch (Exception e) {
+					messageController("error", "El cliente no ha podido registrarse debido a un fallo de la aplicacion.");
+				} finally {
+					if (fromPedido) {
+						addPedido();
+					} else {
+						gestionMenu();						
+					}
+				}
+			}
+			
+		});
 	}
 	
 	/**
@@ -115,77 +136,103 @@ public class Controlador {
 	 */
 
 	public void addPedido() {
-		HashMap<String, String> entrada;
-		String nif, numArticulo, cantidad, fecha;
-		int cantidadInt;
-		Cliente cliente;
-		Articulo articulo;
+		Pane root = this.vista.registerPedido();
+		TextField campoNif = (TextField) root.getChildren().get(4);
+		TextField campoArticulo = (TextField) root.getChildren().get(5);
+		TextField campoCantidad = (TextField) root.getChildren().get(6);
+		Button button = (Button) root.getChildren().get(7);
+		
+		button.setOnAction(new EventHandler<ActionEvent>() {
 
-		entrada = this.vista.registerPedido();
-		nif = entrada.get("nif");
-		numArticulo = entrada.get("numArticulo");
-		cantidad = entrada.get("cantidad");
-		fecha = entrada.get("fecha");
-		cantidadInt = 0;
-
-		try {
-			cantidadInt = Integer.parseInt(cantidad);
-			if(this.datos.existeElemento(numArticulo, "articulo")) {
-				if (!this.datos.existeElemento(nif, "cliente")) {
-					this.vista.mostrarInfoError("\n***El cliente no existe y debe ser registrado***\n");
-					this.addCliente();
-					cliente = this.datos.getClienteByNif(nif);
-					articulo = this.datos.getArticuloByCodigo(numArticulo);
-					this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
-					this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
-				} else {
-					cliente = this.datos.getClienteByNif(nif);
-					articulo = this.datos.getArticuloByCodigo(numArticulo);
-					this.datos.addPedido(cliente, articulo, cantidadInt, fecha);
-					this.vista.mostrarInfo("\n--> El pedido ha sido registrado correctamente.\n");
-				}				
-			} else {
-				this.vista.mostrarInfoError("\n*** El articulo no existe ***\n");
+			@Override
+			public void handle(ActionEvent arg0) {
+				String nif, numArticulo, fecha;
+				int cantidad;
+				Cliente cliente;
+				Articulo articulo;
+				LocalDateTime date = LocalDateTime.now();
+				DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+				
+				nif = campoNif.getText();
+				numArticulo = campoArticulo.getText();
+				System.out.println(numArticulo);
+				cantidad = Integer.parseInt(campoCantidad.getText());
+				fecha = date.format(fmt);
+				try {
+					if(datos.existeElemento(numArticulo, "articulo")) {
+						if (!datos.existeElemento(nif, "cliente")) {
+							messageController("info", "El cliente no existe y debe ser registrado.");
+							addCliente(false);
+						} else {
+							cliente = datos.getClienteByNif(nif);
+							articulo = datos.getArticuloByCodigo(numArticulo);
+							datos.addPedido(cliente, articulo, cantidad, fecha);
+							messageController("info", "El pedido ha sido registrado correctamente.");
+							gestionMenu();
+						}				
+					} else {
+						messageController("error", "El articulo no existe.");
+						gestionMenu();
+					}
+				} catch (NumberFormatException e) {
+					messageController("info", "El formato del campo 'Cantidad' no es valido, revíselo.");
+					gestionMenu();
+				} catch (Exception e) {
+					messageController("error", "El pedido no ha podido registrarse en la base de datos.");
+					gestionMenu();
+				}
 			}
-		} catch (NumberFormatException e) {
-			this.vista.mostrarInfoError("\n*** El formato del campo 'Cantidad' no es valido, revíselo ***");
-		} catch (Exception e) {
-			e.printStackTrace();
-			this.vista.mostrarInfoError("\n*** El pedido no ha podido registrarse en la base de datos ***\n");
-		}
+			
+		});
 	}
 	
 	/**
 	 * Metodo que implementa la adicion de un articulo
 	 */
 
-	private void addArticulo() {
-		HashMap<String, String> entrada;
-		String descripcion, precioVenta, gastosEnvio, tiempoPrep, codigo;
-		int tiempoPrepInt;
-		double precioVentaInt, gastosEnvioInt;
+	public void addArticulo() {
+		Pane root = this.vista.registerArticulo();
+		TextField campoCodigo = (TextField) root.getChildren().get(6);
+		TextField campoDescripcion = (TextField) root.getChildren().get(7);
+		TextField campoPV = (TextField) root.getChildren().get(8);
+		TextField campoGE = (TextField) root.getChildren().get(9);
+		TextField campoTP = (TextField) root.getChildren().get(10);
+		Button button = (Button) root.getChildren().get(11);
+		
+		button.setOnAction(new EventHandler<ActionEvent>() {
 
-		entrada = this.vista.registerArticulo();
-		codigo = entrada.get("codigo");
-		descripcion = entrada.get("descripcion");
-		precioVenta = entrada.get("precioVenta");
-		gastosEnvio = entrada.get("gastosEnvio");
-		tiempoPrep = entrada.get("tiempoPreparacion");
-		try {
-			precioVentaInt = Double.parseDouble(precioVenta);
-			gastosEnvioInt = Double.parseDouble(gastosEnvio);
-			tiempoPrepInt = Integer.parseInt(tiempoPrep);
-			if(!this.datos.existeElemento(codigo, "articulo")) {
-				this.datos.addArticulo(codigo, descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
-				this.vista.mostrarInfo("\n--> El articulo ha sido registrado correctamente.");				
-			} else {
-				this.vista.mostrarInfoError("\n*** El articulo que desea registrar ya existe en la base de datos ***\n");
+			@Override
+			public void handle(ActionEvent event) {
+				String descripcion, precioVenta, gastosEnvio, tiempoPrep, codigo;
+				int tiempoPrepInt;
+				double precioVentaInt, gastosEnvioInt;
+				
+				codigo = campoCodigo.getText();
+				descripcion = campoDescripcion.getText();
+				precioVenta = campoPV.getText();
+				gastosEnvio = campoGE.getText();
+				tiempoPrep = campoTP.getText();
+				
+				try {
+					precioVentaInt = Double.parseDouble(precioVenta);
+					gastosEnvioInt = Double.parseDouble(gastosEnvio);
+					tiempoPrepInt = Integer.parseInt(tiempoPrep);
+					if(!datos.existeElemento(codigo, "articulo")) {
+						datos.addArticulo(codigo, descripcion, precioVentaInt, gastosEnvioInt, tiempoPrepInt);
+						messageController("info", "El articulo ha sido registrado correctamente.");				
+					} else {
+						messageController("error", "El articulo que desea registrar ya existe en la base de datos.");
+					}
+				} catch (NumberFormatException e) {
+					messageController("error", "El formato de los campos no es valido, revíselo.");
+				} catch (Exception e) {
+					messageController("info", "El articulo no ha podido registrarse correctamente en la base de datos.");
+				} finally {
+					gestionMenu();
+				}
 			}
-		} catch (NumberFormatException e) {
-			this.vista.mostrarInfoError("\n*** El formato de los campos no es valido, revíselo ***\n");
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El articulo no ha podido registrarse correctamente en la base de datos***\n");
-		}
+			
+		});
 	}
 	
 	/**
@@ -193,20 +240,30 @@ public class Controlador {
 	 */
 
 	public void deletePedido() {
-		String numPedido;
+		Pane root = this.vista.deletePedido();
+		TextField text = (TextField) root.getChildren().get(1);
+		Button delete = (Button) root.getChildren().get(3);
 		
-		try {
-			numPedido = this.vista.deletePedido();
-			if (this.datos.existeElemento(numPedido, "pedido")) {
-				this.datos.deletePedido(numPedido);
-				this.vista.mostrarInfo("--> El pedido se ha eliminado correctamente.");
-			} else {
-				this.vista.mostrarInfoError("*** El pedido introducido no existe. ***");
-			}		
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El pedido no ha podido ser borrado ***\n");
-		}
+		delete.setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent event) {
+				String numPedido = text.getText();
+				try {
+					if (datos.existeElemento(numPedido, "pedido")) {
+						datos.deletePedido(numPedido);
+						messageController("info", "El pedido se ha eliminado correctamente.");
+					} else {
+						messageController("error", "El pedido introducido no existe.");
+					}		
+				} catch (Exception e) {
+					messageController("error", "El pedido no ha podido ser borrado.");
+				} finally {
+					gestionMenu();
+				}
+			}
+			
+		});
 	}
 
 	/**
@@ -215,23 +272,38 @@ public class Controlador {
 	 */
 	
 	public void mostrarClientes() {
-		ArrayList<Cliente> clientes;
-		ArrayList<String> contenido = new ArrayList<>();
+		Pane root = this.vista.mostrarListado("cliente");
+		Button buttonBuscar = (Button) root.getChildren().get(2);
+		@SuppressWarnings("unchecked")
+		TableView<Cliente> table = (TableView<Cliente>) root.getChildren().get(1);
 		
-		try {
-			clientes = this.datos.getClientes();
-			for (Cliente cliente : clientes) {
-				contenido.add(cliente.toString());
-			}
-			if(contenido.isEmpty()) {
-				this.vista.mostrarInfo("\n*** No hay clientes para mostrar ***\n");
-			} else {
-				this.vista.mostrarListado(contenido, "cliente");							
-			}
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
-		}
+		root.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent event) {
+				if(event.getTarget().equals(buttonBuscar)) {
+					ArrayList<Cliente> clientes;
+					ObservableList<Cliente> data = FXCollections.observableArrayList();
+					try {
+						clientes = datos.getClientes();
+						for (Cliente cliente : clientes) {
+							data.add(cliente);
+						}
+						if(data.isEmpty()) {
+							messageController("info", "No hay clientes para mostrar.");
+						} else {
+							table.setItems(data);
+							vista.cargarDatosListado(table, 1);							
+						}
+					} catch (Exception e) {
+						messageController("error", "El listado no puedo ser mostrado por un fallo de conexión con la base de datos.");
+					}
+				} else {
+					gestionMenu();
+				}
+			}
+			
+		});
 	}
 	
 	/**
@@ -240,25 +312,40 @@ public class Controlador {
 	 */
 
 	public void mostrarEstandar() {
-		ArrayList<Cliente> clientes;
-		ArrayList<String> contenido = new ArrayList<>();
+		Pane root = this.vista.mostrarListado("cliente");
+		Button buttonBuscar = (Button) root.getChildren().get(2);
+		@SuppressWarnings("unchecked")
+		TableView<Cliente> table = (TableView<Cliente>) root.getChildren().get(1);
 		
-		try {
-			clientes = this.datos.getClientes();
-			for (Cliente cliente : clientes) {
-				if (cliente.tipoCliente().equals("estandar")) {
-					contenido.add(cliente.toString());
+		root.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(event.getTarget().equals(buttonBuscar)) {
+					ArrayList<Cliente> clientes;
+					ObservableList<Cliente> data = FXCollections.observableArrayList();
+					try {
+						clientes = datos.getClientes();
+						for (Cliente cliente : clientes) {
+							if (cliente.tipoCliente().equals("estandar")) {
+								data.add(cliente);
+							}
+						}
+						if(data.isEmpty()) {
+							messageController("info", "No hay clientes para mostrar.n");
+						} else {
+							table.setItems(data);
+							vista.cargarDatosListado(table, 1);							
+						}
+					} catch (Exception e) {
+						messageController("error", "El listado no puedo ser mostrado por un fallo de conexión con la base de datos.");
+					}
+				} else {
+					gestionMenu();
 				}
 			}
-			if(contenido.isEmpty()) {
-				this.vista.mostrarInfo("\n*** No hay clientes estándar para mostrar ***\n");
-			} else {
-				this.vista.mostrarListado(contenido, "cliente");							
-			}
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
-		}
-
+			
+		});
 	}
 	
 	/**
@@ -266,47 +353,81 @@ public class Controlador {
 	 */
 
 	public void mostrarPremium() {
-		ArrayList<Cliente> clientes;
-		ArrayList<String> contenido = new ArrayList<>();
+		Pane root = this.vista.mostrarListado("cliente");
+		Button buttonBuscar = (Button) root.getChildren().get(2);
+		@SuppressWarnings("unchecked")
+		TableView<Cliente> table = (TableView<Cliente>) root.getChildren().get(1);
 		
-		try {
-			clientes = this.datos.getClientes();
-			for (Cliente cliente : clientes) {
-				if (cliente.tipoCliente().equals("premium")) {
-					contenido.add(cliente.toString());
+		root.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(event.getTarget().equals(buttonBuscar)) {
+					ArrayList<Cliente> clientes;
+					ObservableList<Cliente> data = FXCollections.observableArrayList();
+					try {
+						clientes = datos.getClientes();
+						for (Cliente cliente : clientes) {
+							if (cliente.tipoCliente().equals("premium")) {
+								data.add(cliente);
+							}
+						}
+						if(data.isEmpty()) {
+							messageController("info", "No hay clientes para mostrar.");
+						} else {
+							table.setItems(data);
+							vista.cargarDatosListado(table, 1);							
+						}
+					} catch (Exception e) {
+						messageController("error", "El listado no puedo ser mostrado por un fallo de conexión con la base de datos.");
+					}
+				} else {
+					gestionMenu();
 				}
 			}
-			if(contenido.isEmpty()) {
-				this.vista.mostrarInfo("\n*** No hay clientes premium para mostrar ***\n");
-			} else {
-				this.vista.mostrarListado(contenido, "cliente");							
-			}
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
-		}
-
+			
+		});
 	}
+	
 	/**
 	 * Metodo que implementa el muestreo de articulos
 	 */
 	
 	public void mostrarArticulos() {
-		ArrayList<Articulo> articulos;
-		ArrayList<String> contenido = new ArrayList<>();
+		Pane root = this.vista.mostrarListado("articulo");
+		Button buttonBuscar = (Button) root.getChildren().get(2);
+		@SuppressWarnings("unchecked")
+		TableView<Articulo> table = (TableView<Articulo>) root.getChildren().get(1);
 		
-		try {
-			articulos = this.datos.getArticulos();
-			if(articulos.isEmpty()) {
-				this.vista.mostrarInfo("\n*** No hay articulos para mostrar ***\n");
-			} else {
-				for (Articulo articulo: articulos) {
-					contenido.add(articulo.toString());
+		root.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(event.getTarget().equals(buttonBuscar)) {
+					ArrayList<Articulo> articulos;
+					ObservableList<Articulo> data = FXCollections.observableArrayList();
+					
+					try {
+						articulos = datos.getArticulos();
+						if(articulos.isEmpty()) {
+							messageController("info", "No hay articulos para mostrar.");
+						} else {
+							for (Articulo articulo: articulos) {
+								data.add(articulo);
+							}
+							table.setItems(data);
+							vista.cargarDatosListado(table, 1);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						messageController("error", "El listado no puedo ser mostrado por un fallo de conexión con la base de datos.");
+					}
+				} else {
+					gestionMenu();
 				}
-				this.vista.mostrarListado(contenido, "articulo");							
 			}
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
-		}
+			
+		});
 
 	}
 	
@@ -315,35 +436,62 @@ public class Controlador {
 	 */
 
 	public void mostrarPedidosPendientes() {
-		ArrayList<Pedido> pedidos;
-		ArrayList<String> contenido = new ArrayList<>();
-		String filtro;
+		Pane root = this.vista.mostrarListado("pedido");
+		Button buttonBuscar = (Button) root.getChildren().get(4);
+		Button buttonVolver = (Button) root.getChildren().get(5);
+		CheckBox checkBox = (CheckBox) root.getChildren().get(2);
+		TextField input = (TextField) root.getChildren().get(3);
+		@SuppressWarnings("unchecked")
+		TableView<Pedido> table = (TableView<Pedido>) root.getChildren().get(1);
+		
+		buttonBuscar.setOnAction(new EventHandler<ActionEvent>() {
 
-		try {
-			pedidos = this.datos.getPedidos();
-			filtro = this.vista.filtroListadoPedidos();
-			if (!filtro.equals("ninguno")) {
-				Cliente cliente = this.datos.getClienteByNif(filtro);
-				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().getNif().equals(cliente.getNif()) && !pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
+			@Override
+			public void handle(ActionEvent event) {
+				ArrayList<Pedido> pedidos;
+				ObservableList<Pedido> data = FXCollections.observableArrayList();
+				try {
+					pedidos = datos.getPedidos();
+					System.out.println(checkBox.isSelected());
+					if (checkBox.isSelected()) {
+						Cliente cliente = datos.getClienteByNif(input.getText());
+						pedidos.forEach((pedido) -> {
+							if (pedido.getCliente().getNif().equals(cliente.getNif()) && !pedido.pedidoEnviado()) {
+								pedido.setCodArticulo(null);
+								pedido.setEmail(null);
+								data.add(pedido);
+							}
+						});
+					} else {
+						pedidos.forEach((pedido) -> {
+							if (!pedido.pedidoEnviado()) {
+								pedido.setCodArticulo(null);
+								pedido.setEmail(null);
+								data.add(pedido);
+							}
+						});
 					}
-				});
-			} else {
-				pedidos.forEach((pedido) -> {
-					if (!pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
+					if (data.isEmpty()) {
+						messageController("info", "No hay ningún pedido que coincida con los parámetros de búsqueda");
+					} else {
+						table.setItems(data);
+						vista.cargarDatosListado(table, 1);
 					}
-				});
+				} catch (Exception e){
+					messageController("error", "El listado no puedo ser mostrado por un fallo de la aplicación.");
+				}
 			}
-			if(contenido.isEmpty()) {
-				this.vista.mostrarInfo("\n*** No hay pedidos para mostrar ***\n");
-			} else {
-				this.vista.mostrarListado(contenido, "pedido");				
+			
+		});
+		
+		buttonVolver.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				gestionMenu();
 			}
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
-		}
+			
+		});
 	}
 	
 	/**
@@ -351,30 +499,73 @@ public class Controlador {
 	 */
 
 	public void mostrarPedidosEnviados() {
-		ArrayList<Pedido> pedidos;
-		ArrayList<String> contenido = new ArrayList<>();
-		String filtro;
+		Pane root = this.vista.mostrarListado("pedido");
+		Button buttonBuscar = (Button) root.getChildren().get(4);
+		Button buttonVolver = (Button) root.getChildren().get(5);
+		CheckBox checkBox = (CheckBox) root.getChildren().get(2);
+		TextField input = (TextField) root.getChildren().get(3);
+		@SuppressWarnings("unchecked")
+		TableView<Pedido> table = (TableView<Pedido>) root.getChildren().get(1);
+		
+		buttonBuscar.setOnAction(new EventHandler<ActionEvent>() {
 
-		try {
-			pedidos = this.datos.getPedidos();
-			filtro = this.vista.filtroListadoPedidos();
-			if (!filtro.equals("ninguno")) {
-				Cliente cliente = this.datos.getClienteByNif(filtro);
-				pedidos.forEach((pedido) -> {
-					if (pedido.getCliente().getNif().equals(cliente.getNif()) && pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
+			@Override
+			public void handle(ActionEvent event) {
+				ArrayList<Pedido> pedidos;
+				ObservableList<Pedido> data = FXCollections.observableArrayList();
+				try {
+					pedidos = datos.getPedidos();
+					if (checkBox.isSelected()) {
+						Cliente cliente = datos.getClienteByNif(input.getText());
+						pedidos.forEach((pedido) -> {
+							if (pedido.getCliente().getNif().equals(cliente.getNif()) && pedido.pedidoEnviado()) {
+								pedido.setCodArticulo(null);
+								pedido.setEmail(null);
+								data.add(pedido);
+							}
+						});
+					} else {
+						pedidos.forEach((pedido) -> {
+							if (pedido.pedidoEnviado()) {
+								pedido.setCodArticulo(null);
+								pedido.setEmail(null);
+								data.add(pedido);
+							}
+						});
 					}
-				});
-			} else {
-				pedidos.forEach((pedido) -> {
-					if (pedido.pedidoEnviado()) {
-						contenido.add(pedido.toString());
+					if (data.isEmpty()) {
+						messageController("info", "No hay ningún pedido que coincida con los parámetros de búsqueda");
+					} else {
+						table.setItems(data);
+						vista.cargarDatosListado(table, 1);
 					}
-				});
+				} catch (Exception e){
+					messageController("error", "El listado no puedo ser mostrado por un fallo de la aplicación.");
+				}
 			}
-			this.vista.mostrarListado(contenido, "pedido");
-		} catch (Exception e) {
-			this.vista.mostrarInfoError("\n*** El listado no puedo ser mostrado por un fallo de conexión con la base de datos ***\n");
+			
+		});
+		
+		buttonVolver.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				gestionMenu();
+			}
+			
+		});
+	}
+	
+	public void closeApp() {
+		this.vista.closeApp();
+	}
+	
+	public void messageController(String type, String message) {
+		try {
+			this.vista.mostrarDialog(message, type);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

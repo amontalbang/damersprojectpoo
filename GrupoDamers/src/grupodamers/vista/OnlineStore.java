@@ -10,26 +10,22 @@ import java.util.logging.Logger;
 
 import grupodamers.controlador.Controlador;
 import grupodamers.modelo.Datos;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 /**
  *
  * @author DAMERs Project POO
  */
-public class OnlineStore {
+public class OnlineStore extends Application {
 
     /**
      * 
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    	
-    	GestionOS vista = new GestionOS();
-    	Datos modelo = new Datos();
-    	Controlador controlador = new Controlador(modelo, vista);
-    	
     	OnlineStore.quitarLogs();
-    	controlador.gestionMenu();
-    	
+    	launch(args);
     }
     
     private static void quitarLogs() {
@@ -37,5 +33,14 @@ public class OnlineStore {
     	Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
     	globalLogger.setLevel(java.util.logging.Level.OFF);
     }
+
+	@Override
+	public void start(Stage stage) throws Exception {
+		GestionOS vista = new GestionOS(stage, "Online Store");
+		Datos modelo = new Datos();
+		Controlador controlador = new Controlador(modelo, vista);
+		vista.setControlador(controlador);
+		controlador.gestionMenu();
+	}
     
 }

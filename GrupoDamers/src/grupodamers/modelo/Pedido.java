@@ -16,7 +16,9 @@ public class Pedido {
     
     private String numPedido;
     private Cliente cliente;
+    private String email;
     private Articulo articulo;
+    private String codArticulo;
     private int cantidad;
     private String fecha;
     private double precioEnvio;
@@ -41,7 +43,9 @@ public class Pedido {
     public Pedido(String numPedido, Cliente cliente, Articulo articulo, int cantidad, String fecha){
         this.numPedido = numPedido;
         this.cliente = cliente;
+        this.email = cliente.getEmail();
         this.articulo = articulo;
+        this.codArticulo = articulo.getCodigo();
         this.cantidad = cantidad;
         this.fecha = fecha;
         this.precioEnvio = this.precioEnvio();
@@ -49,13 +53,25 @@ public class Pedido {
     }
     
     public Pedido(Cliente cliente, Articulo articulo, int cantidad, String fecha){
-        this.cliente = cliente;
+    	this.cliente = cliente;
+        this.email = cliente.getEmail();
         this.articulo = articulo;
+        this.codArticulo = articulo.getCodigo();
         this.cantidad = cantidad;
         this.fecha = fecha;
         this.precioEnvio = this.precioEnvio();
         this.precioTotal = this.precioTotal();
-    } 
+    }
+    
+    public Pedido(String numPedido, String email, String codArticulo, int cantidad, String fecha){
+        this.numPedido = numPedido;
+        this.email = email;
+        this.codArticulo = codArticulo;
+        this.cantidad = cantidad;
+        this.fecha = fecha;
+        this.precioEnvio = this.precioEnvio();
+        this.precioTotal = this.precioTotal();
+    }
     
      /**
     * Metodo para obtener el numero de pedido
@@ -86,11 +102,28 @@ public class Pedido {
     
     /**
     * Metodo para registrar cliente registrado en un pedido
-        * @param cliente cliente registrado en un pedido
+    * @param cliente cliente registrado en un pedido
     */ 
     
     public void setCliente(Cliente cliente){
         this.cliente = cliente;
+    }
+    
+    /**
+     * Metodo que permite obtener el email del cliente
+     * @return String email
+     */
+    
+    public String getEmail() {
+    	return this.email;
+    }
+    
+    /**
+     * Metodo para setear el email en el campo corresponiente
+     */
+    
+    public void setEmail(String email) {
+    	this.email = this.cliente.getEmail();
     }
     
       /**
@@ -109,6 +142,23 @@ public class Pedido {
     
     public void setArticulo(Articulo articulo){
         this.articulo = articulo;
+    }
+    
+    /**
+     * Metodo que permite obtener el codigo del articulo pedido
+     * @return String codArticulo
+     */
+    
+    public String getCodArticulo() {
+    	return this.codArticulo;
+    }
+    
+    /**
+     * Metodo para setear el codigo de articulo
+     */
+    
+    public void setCodArticulo(String codArticulo) {
+    	this.codArticulo = this.articulo.getCodigo();
     }
     
      /**
@@ -189,13 +239,13 @@ public class Pedido {
     
     public String toString() {
     	if(this.pedidoEnviado()) {
-    		return "Pedido [numPedido= " + this.numPedido + ", nombre del cliente= " + this.cliente.getNombre() + ", NIF del cliente= " + this.cliente.getNif() + ",  codigo de articulo= " + this.articulo.getCodigo() +
+    		return "Pedido [numPedido= " + this.numPedido + ", nombre del cliente= " + this.cliente.getNombre() + ", email del cliente= " + this.email + ",  codigo de articulo= " + this.codArticulo +
     				", precio del articulo= " + this.articulo.getPrecioVenta() + ", descripcion de articulo= " + this.articulo.getDescripcion() +
     				", coste de envio del articulo= " + this.articulo.getGastosEnvio() + ", cantidad= " + this.cantidad + ", fecha= " + this.fecha + ", el coste total del envio= " +
     				String.format("%.2f", this.precioEnvio) + ", el coste del pedido= " + this.precioTotal + ". El pedido ha sido enviado]\n";
     		
     	} else {
-    		return "Pedido [numPedido= " + this.numPedido + ", nombre del cliente= " + this.cliente.getNombre() + ", NIF del cliente= " + this.cliente.getNif() + ",  codigo de articulo= " + this.articulo.getCodigo() +
+    		return "Pedido [numPedido= " + this.numPedido + ", nombre del cliente= " + this.cliente.getNombre() + ", email del cliente= " + this.email + ",  codigo de articulo= " + this.codArticulo +
     				", precio del articulo= " + this.articulo.getPrecioVenta() + ", descripcion de articulo= " + this.articulo.getDescripcion() +
     				", coste de envio del articulo= " + this.articulo.getGastosEnvio() + ", cantidad=" + this.cantidad + ", fecha= " + this.fecha + ", el coste total del envio= " +
     				String.format("%.2f", this.precioEnvio) + ", el coste del pedido= " + this.precioTotal + ". El pedido aun no ha sido enviado]\n";
